@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap');
+/* 테마: 테크 미니멀 */
+:root{
+  --bg:#ffffff;--bg-soft:#f0f0f0;--surface:#fafafa;--surface-2:#f0f0f0;
+  --border:#e5e7eb;--border-strong:rgba(34,34,34,0.28);
+  --text-1:#222222;--text-2:#18181b;--text-3:#45515e;
+  --accent:#1456f0;--accent-2:#8e8e93;--accent-3:#16a34a;
+  --good:#16a34a;--warn:#eab308;--bad:#dc2626;
+  --grad:linear-gradient(135deg,#1456f0,#8e8e93);
+  --grad-soft:linear-gradient(135deg,rgba(20,86,240,0.12),rgba(142,142,147,0.12));
+  --radius:13px;--radius-sm:8px;--radius-lg:20px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Space Grotesk','IBM Plex Sans KR',sans-serif;--font-sans:'IBM Plex Sans KR',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(color-mix(in srgb,var(--text-1) 14%,transparent) 1px,transparent 1.5px) 0 0/22px 22px}
+.slide::after{content:"● LIVE  ·  " counter(sl,decimal-leading-zero);position:absolute;top:30px;right:44px;font:600 13px var(--font-display);letter-spacing:.14em;color:var(--good)}
+.h1,h1.title,.h2,h2.title{font-family:'IBM Plex Sans KR',sans-serif;font-weight:700;letter-spacing:-.03em}
+.kicker{font-family:var(--font-display);letter-spacing:.18em}
+.card{border-radius:12px;border:1px solid var(--border-strong);box-shadow:none;background:var(--surface);padding-top:34px}
+.card::before{content:"";position:absolute;left:0;top:0;right:0;height:5px;background:linear-gradient(90deg,var(--accent) 62%,var(--surface-2) 62%)}
+.card:nth-child(2n)::before{background:linear-gradient(90deg,var(--accent-2) 38%,var(--surface-2) 38%)}
+.pill{border-radius:6px;font-family:var(--font-display)}

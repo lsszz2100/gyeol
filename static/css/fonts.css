@@ -1,0 +1,75 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import url('https://cdn.jsdelivr.net/gh/spoqa/spoqa-han-sans@latest/css/SpoqaHanSansNeo.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Space+Grotesk:wght@500;700&display=swap');
+/* ==========================================================================
+   결(GYEOL) - 한국어 상업용 무료 프리미엄 웹폰트 시스템
+   ========================================================================== */
+
+/* 1. Pretendard (한국형 만능 본문 및 UI 표준 고딕 - 전 두께 지원) */
+
+/* 2. Spoqa Han Sans Neo (숫자, 데이터, 대시보드 및 모던 비즈니스 고딕) */
+
+/* 3. Gmarket Sans (강렬하고 세련된 헤드라인 및 타이틀 전용 폰트) */
+@font-face {
+    font-family: 'GmarketSansLight';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansLight.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'GmarketSansMedium';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'GmarketSansBold';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 4. 조선일보명조 (신뢰감, 에디토리얼, 기획서, 감성 명조체) */
+@font-face {
+    font-family: 'Chosunilbo_myungjo';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Chosunilbo_myungjo.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 5. 나눔스퀘어 네오 (IT, 스타트업, 간결한 직선미) */
+@font-face {
+    font-family: 'NanumSquareNeo-Variable';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/NanumSquareNeo-Variable.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 6. 배달의민족 주아체 (캐주얼, 카드뉴스, 친근한 포인트 폰트) */
+@font-face {
+    font-family: 'BMJUA';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* 영문 & 코드 모노스페이스 글로벌 폰트 보조 */
+
+/* ==========================================================================
+   디자인 토큰별 기본 폰트 패밀리 지정 (CSS 변수)
+   ========================================================================== */
+:root {
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-serif: "Chosunilbo_myungjo", "Batang", "Noto Serif KR", serif;
+  --font-heading: "GmarketSansBold", "Pretendard Variable", Pretendard, sans-serif;
+  --font-title: "NanumSquareNeo-Variable", "Pretendard Variable", Pretendard, sans-serif;
+  --font-data: "Spoqa Han Sans Neo", "Pretendard Variable", sans-serif;
+  --font-point: "BMJUA", "GmarketSansBold", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Consolas, Menlo, monospace;
+}

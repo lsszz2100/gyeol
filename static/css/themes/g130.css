@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Gasoek+One&family=Gothic+A1:wght@400;700&display=swap');
+/* 테마: 뮤직 그린 */
+:root{
+  --bg:#121212;--bg-soft:#1f1f1f;--surface:#181818;--surface-2:#1f1f1f;
+  --border:#4d4d4d;--border-strong:rgba(255,255,255,0.28);
+  --text-1:#ffffff;--text-2:#fdfdfd;--text-3:#b3b3b3;
+  --accent:#1ed760;--accent-2:#1ed760;--accent-3:#1ed760;
+  --good:#1ed760;--warn:#ffa42b;--bad:#f3727f;
+  --grad:linear-gradient(135deg,#1ed760,#1ed760);
+  --grad-soft:linear-gradient(135deg,rgba(30,215,96,0.12),rgba(30,215,96,0.12));
+  --radius:6px;--radius-sm:9999px;--radius-lg:8px;
+  --shadow:0 10px 30px rgba(0,0,0,0.45),0 2px 6px rgba(0,0,0,0.3);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.55),0 6px 16px rgba(0,0,0,0.35);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Gasoek One',sans-serif;--font-sans:'Gothic A1',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:counter(sl,decimal-leading-zero);position:absolute;z-index:-1;right:-30px;top:50%;transform:translateY(-50%);font:400 520px/1 var(--font-display);color:var(--accent);opacity:.12;letter-spacing:-.06em}
+.slide::after{content:"";position:absolute;left:96px;top:56px;width:48px;height:48px;background:var(--accent);border-radius:50%}
+.h1,h1.title{font-weight:400;font-size:100px;line-height:1;letter-spacing:-.03em}
+.h2,h2.title{font-weight:400;font-size:62px;line-height:1.05}
+.gradient-text{background:none;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:2.5px var(--accent)}
+.kicker{font-weight:700;letter-spacing:.3em;color:var(--text-1);margin-top:30px}
+.card{border-radius:0;border:0;border-top:10px solid var(--accent);box-shadow:none;background:var(--surface-2)}
+.pill{border-radius:0;background:var(--accent);color:var(--bg);border:0;font-weight:700}

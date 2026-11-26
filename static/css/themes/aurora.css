@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300;500;800&display=swap');
+/* 테마: 오로라 */
+:root{
+  --bg:#06091c;--bg-soft:#0a1130;--surface:rgba(255,255,255,.05);--surface-2:rgba(255,255,255,.08);
+  --border:rgba(180,220,255,.14);--border-strong:rgba(180,220,255,.28);
+  --text-1:#e8f0ff;--text-2:#b4c4e4;--text-3:#6a7a9e;
+  --accent:#5ef2c6;--accent-2:#7aa2ff;--accent-3:#c984ff;
+  --good:#5ef2c6;--warn:#ffd27a;--bad:#ff8ab0;
+  --grad:linear-gradient(135deg,#5ef2c6,#7aa2ff);
+  --grad-soft:linear-gradient(135deg,rgba(94,242,198,0.12),rgba(122,162,255,0.12));
+  --radius:20px;--radius-sm:14px;--radius-lg:28px;
+  --shadow:0 10px 30px rgba(0,0,0,0.45),0 2px 6px rgba(0,0,0,0.3);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.55),0 6px 16px rgba(0,0,0,0.35);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Pretendard Variable',Pretendard,sans-serif;--font-sans:'Gothic A1',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:-20%;z-index:-1;filter:blur(60px);opacity:.55;
+  background:radial-gradient(closest-side at 20% 25%,var(--accent),transparent),radial-gradient(closest-side at 80% 70%,var(--accent-2),transparent),radial-gradient(closest-side at 65% 15%,var(--accent-3),transparent)}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;bottom:32px;right:48px;font:500 14px var(--font-sans);padding:6px 14px;border-radius:99px;background:color-mix(in srgb,var(--surface) 40%,transparent);backdrop-filter:blur(10px);border:1px solid var(--border)}
+.h1,h1.title{font-weight:800;letter-spacing:-.04em}
+.kicker{display:inline-block;align-self:flex-start;padding:6px 14px;border-radius:99px;background:color-mix(in srgb,var(--surface) 35%,transparent);backdrop-filter:blur(10px);border:1px solid var(--border);text-transform:none;letter-spacing:.02em}
+.card{background:color-mix(in srgb,var(--surface) 45%,transparent);backdrop-filter:blur(18px) saturate(140%);border:1px solid color-mix(in srgb,var(--text-1) 14%,transparent);border-radius:28px}
+.pill{background:color-mix(in srgb,var(--surface) 40%,transparent);backdrop-filter:blur(8px)}

@@ -1,0 +1,45 @@
+# ── 비밀값 (절대 올리지 않음) ──
+packaging/signing_key.hex
+packaging/license_server/.secrets.json
+packaging/license_server/issued.json
+packaging/license_server/.wrangler/
+core/server_local.py
+*.pem
+.env
+.env.*
+
+# ── 사용자 데이터 (API 키가 든 설정·프로젝트·사진) ──
+data/
+
+# ── 빌드 결과·임시 ──
+packaging/output/
+packaging/build_code/
+packaging/.compile-tmp/
+packaging/compiled/
+packaging/MicrosoftEdgeWebview2Setup.exe
+packaging/*.log
+packaging/last_full_release.txt
+packaging/last_full_setup.json
+packaging/version.txt
+packaging/runtime.txt
+build/
+dist/
+*.pyd
+__pycache__/
+*.pyc
+
+# ── 시험 결과 ──
+_qa/
+packaging/license_server/apply_tokens.sh
+
+# ── 공개 저장소에 올리지 않는 내부 도구·자료 ──
+packaging/license_server/
+packaging/license_admin.py
+templates/
+tools/build_themes.py
+tools/theme_names.py
+tools/theme_ids.local.json
+tools/build_icons.py
+tools/lucide-sprite.svg
+tools/pptx_survey.py
+packaging/build_py.local.txt

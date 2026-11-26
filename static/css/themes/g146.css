@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=Noto+Serif+KR:wght@400;600&display=swap');
+/* 테마: 빈티지 */
+:root{
+  --bg:#faf3df;--bg-soft:#efe0bd;--surface:#fffaf0;--surface-2:#efe0bd;
+  --border:#ddd0b4;--border-strong:rgba(33,27,18,0.28);
+  --text-1:#211b12;--text-2:#504737;--text-3:#7c7160;
+  --accent:#8f5d24;--accent-2:#8f5d24;--accent-3:#5b8d42;
+  --good:#5b8d42;--warn:#c27b22;--bad:#a64036;
+  --grad:linear-gradient(135deg,#8f5d24,#8f5d24);
+  --grad-soft:linear-gradient(135deg,rgba(143,93,36,0.12),rgba(143,93,36,0.12));
+  --radius:16px;--radius-sm:10px;--radius-lg:24px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Nanum Myeongjo',serif;--font-sans:'Noto Serif KR',serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide{padding:140px 96px 80px}
+.slide::before{content:"THE DAILY  ·  제 " counter(sl) " 면";position:absolute;left:96px;right:96px;top:44px;padding:10px 0;border-top:4px solid var(--text-1);border-bottom:1px solid var(--text-1);font:800 20px var(--font-display);letter-spacing:.2em;text-align:center}
+.h1,h1.title{font-weight:800;font-size:76px;line-height:1.12;letter-spacing:-.03em}
+.h2,h2.title{font-weight:800;line-height:1.18}
+.kicker{color:var(--accent);font-weight:600;letter-spacing:.1em}
+.lede{font-family:var(--font-sans);column-count:2;column-gap:40px;column-rule:1px solid var(--border-strong);max-width:none}
+.grid .lede,.card .lede,.center .lede{column-count:1}
+.grid{gap:0}
+.card{border:0;border-radius:0;box-shadow:none;background:transparent;border-right:1px solid var(--border-strong);padding:0 24px}
+.card:last-child{border-right:0}
+.pill{border-radius:0;background:transparent;border:1px solid var(--text-1);color:var(--text-1)}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent)}

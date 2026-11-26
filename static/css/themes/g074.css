@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap');
+/* 테마: 딥 퍼플 거래소 */
+:root{
+  --bg:#0b1020;--bg-soft:#1b2450;--surface:#121a33;--surface-2:#1b2450;
+  --border:#26314f;--border-strong:rgba(248,250,252,0.28);
+  --text-1:#f8fafc;--text-2:#cbd5e1;--text-3:#8b95aa;
+  --accent:#7132f5;--accent-2:#7d5cff;--accent-3:#00c853;
+  --good:#00c853;--warn:#ffb020;--bad:#ff4d6d;
+  --grad:linear-gradient(135deg,#7132f5,#7d5cff);
+  --grad-soft:linear-gradient(135deg,rgba(113,50,245,0.12),rgba(125,92,255,0.12));
+  --radius:12px;--radius-sm:8px;--radius-lg:18px;
+  --shadow:0 10px 30px rgba(0,0,0,0.45),0 2px 6px rgba(0,0,0,0.3);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.55),0 6px 16px rgba(0,0,0,0.35);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Gowun Batang',serif;--font-sans:'Gowun Batang',serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide{text-align:center;align-items:center;padding:110px 160px}
+.slide::before{content:"";position:absolute;inset:34px;z-index:-1;border:1px solid var(--accent);outline:1px solid color-mix(in srgb,var(--accent) 45%,transparent);outline-offset:-10px}
+.slide.with-photo{padding-right:calc(40% + 40px)}
+.g-photo{top:45px;bottom:45px;right:45px;width:calc(40% - 45px)}
+.slide::after{content:counter(sl,upper-roman);position:absolute;bottom:52px;left:0;right:0;font:italic 500 20px 'Cormorant Garamond',serif;letter-spacing:.3em;color:var(--accent)}
+.h1,h1.title{font-weight:400;font-size:70px;letter-spacing:.02em;line-height:1.3}
+.h2,h2.title{font-weight:400;letter-spacing:.02em;line-height:1.3}
+.kicker{font:italic 500 20px 'Cormorant Garamond',serif;letter-spacing:.4em;color:var(--accent)}
+.lede{margin-left:auto;margin-right:auto}
+.row{justify-content:center}
+.slide>:is(.grid,.stack,ul,ol){align-self:stretch}
+.slide ul,.slide ol{text-align:left}
+.card ul,.card ol{display:inline-block;margin-left:auto;margin-right:auto}
+.stack .row{justify-content:space-between}
+.card{background:transparent;border:0;border-top:1px solid var(--accent);border-radius:0;box-shadow:none;padding:28px 18px 8px}
+.pill{background:transparent;border:1px solid var(--accent);color:var(--accent);border-radius:0;letter-spacing:.2em}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent)}
+.divider-accent{margin:0 auto;height:1px;width:80px}

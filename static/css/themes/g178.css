@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gothic+A1:wght@400;700&display=swap');
+/* 테마: 핑크 스크립트 */
+:root{
+  --bg:#060507;--bg-soft:#B81D67;--surface:#060507;--surface-2:#B81D67;
+  --border:rgba(245,237,241,0.14);--border-strong:rgba(245,237,241,0.32);
+  --text-1:#F5EDF1;--text-2:rgba(245,237,241,0.78);--text-3:rgba(245,237,241,0.55);
+  --accent:#ED3D8C;--accent-2:#B81D67;--accent-3:#FF66A8;
+  --good:#1aaf6c;--warn:#f5a524;--bad:#e0445a;
+  --grad:linear-gradient(135deg,#ED3D8C,#B81D67);
+  --grad-soft:linear-gradient(135deg,rgba(237,61,140,0.12),rgba(184,29,103,0.12));
+  --radius:14px;--radius-sm:8px;--radius-lg:22px;
+  --shadow:0 10px 30px rgba(0,0,0,0.45),0 2px 6px rgba(0,0,0,0.3);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.55),0 6px 16px rgba(0,0,0,0.35);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Black Han Sans',sans-serif;--font-sans:'Gothic A1',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;left:-20%;right:-20%;bottom:-10%;height:45%;z-index:-1;transform:perspective(400px) rotateX(62deg);transform-origin:bottom;opacity:.5;
+  background:linear-gradient(var(--accent) 2px,transparent 2px) 0 0/100% 48px,linear-gradient(90deg,var(--accent) 2px,transparent 2px) 0 0/64px 100%;
+  -webkit-mask:linear-gradient(transparent,#000);mask:linear-gradient(transparent,#000)}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;top:30px;right:44px;font:400 30px var(--font-display);color:var(--accent-2);text-shadow:0 0 10px var(--accent-2),0 0 26px var(--accent-2)}
+.h1,h1.title,.h2,h2.title{font-weight:400;text-shadow:0 0 14px color-mix(in srgb,var(--accent) 80%,transparent),0 0 40px color-mix(in srgb,var(--accent) 50%,transparent)}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent)}
+.kicker{color:var(--accent-2);text-shadow:0 0 8px var(--accent-2)}
+.card{background:color-mix(in srgb,var(--bg) 75%,transparent);border:2px solid var(--accent);border-radius:14px;box-shadow:0 0 18px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 18px color-mix(in srgb,var(--accent) 25%,transparent)}
+.pill{border-color:var(--accent-2);color:var(--accent-2);background:transparent;box-shadow:0 0 10px color-mix(in srgb,var(--accent-2) 60%,transparent)}

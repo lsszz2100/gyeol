@@ -1,0 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Gasoek+One&family=Gothic+A1:wght@400;700&display=swap');
+/* 테마: 브로드사이드 */
+:root{
+  --bg:#111111;--bg-soft:#1a1a18;--surface:#111111;--surface-2:#1a1a18;
+  --border:rgba(240,236,229,0.14);--border-strong:rgba(240,236,229,0.32);
+  --text-1:#f0ece5;--text-2:rgba(240,236,229,0.78);--text-3:rgba(240,236,229,0.55);
+  --accent:#e85d26;--accent-2:#e85d26;--accent-3:#e85d26;
+  --good:#1aaf6c;--warn:#f5a524;--bad:#e0445a;
+  --grad:linear-gradient(135deg,#e85d26,#e85d26);
+  --grad-soft:linear-gradient(135deg,rgba(232,93,38,0.12),rgba(232,93,38,0.12));
+  --radius:14px;--radius-sm:8px;--radius-lg:22px;
+  --shadow:0 10px 30px rgba(0,0,0,0.45),0 2px 6px rgba(0,0,0,0.3);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.55),0 6px 16px rgba(0,0,0,0.35);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Gasoek One',sans-serif;--font-sans:'Gothic A1',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:counter(sl,decimal-leading-zero);position:absolute;z-index:-1;right:-30px;top:50%;transform:translateY(-50%);font:400 520px/1 var(--font-display);color:var(--accent);opacity:.12;letter-spacing:-.06em}
+.slide::after{content:"";position:absolute;left:96px;top:56px;width:48px;height:48px;background:var(--accent);border-radius:50%}
+.h1,h1.title{font-weight:400;font-size:100px;line-height:1;letter-spacing:-.03em}
+.h2,h2.title{font-weight:400;font-size:62px;line-height:1.05}
+.gradient-text{background:none;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:2.5px var(--accent)}
+.kicker{font-weight:700;letter-spacing:.3em;color:var(--text-1);margin-top:30px}
+.card{border-radius:0;border:0;border-top:10px solid var(--accent);box-shadow:none;background:var(--surface-2)}
+.pill{border-radius:0;background:var(--accent);color:var(--bg);border:0;font-weight:700}

@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Playfair+Display:ital,wght@1,400;1,600&display=swap');
+/* 테마: 소프트 에디토리얼 */
+:root{
+  --bg:#F2EEDF;--bg-soft:#D6DD63;--surface:#F2EEDF;--surface-2:#D6DD63;
+  --border:rgba(42,36,27,0.14);--border-strong:rgba(42,36,27,0.32);
+  --text-1:#2A241B;--text-2:rgba(42,36,27,0.78);--text-3:rgba(42,36,27,0.55);
+  --accent:#E1A4C2;--accent-2:#E1A4C2;--accent-3:#E1A4C2;
+  --good:#1aaf6c;--warn:#f5a524;--bad:#e0445a;
+  --grad:linear-gradient(135deg,#E1A4C2,#E1A4C2);
+  --grad-soft:linear-gradient(135deg,rgba(225,164,194,0.12),rgba(225,164,194,0.12));
+  --radius:14px;--radius-sm:8px;--radius-lg:22px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Nanum Myeongjo',serif;--font-sans:'Pretendard Variable',Pretendard,sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide{padding:96px 140px}
+.slide::before{content:"";position:absolute;inset:36px 56px;z-index:-1;border-top:3px double var(--text-1);border-bottom:1px solid var(--text-1)}
+.slide::after{content:"— " counter(sl) " —";position:absolute;bottom:46px;left:0;right:0;text-align:center;font:italic 400 18px 'Playfair Display',serif;color:var(--text-3)}
+.h1,h1.title{font-weight:800;font-size:78px;letter-spacing:-.03em;line-height:1.15}
+.h2,h2.title{font-weight:700;letter-spacing:-.025em;line-height:1.2}
+.kicker{font:italic 600 22px 'Playfair Display',serif;text-transform:none;letter-spacing:0;color:var(--accent)}
+.lede{font-family:var(--font-display);font-weight:400;font-size:24px}
+.card{background:transparent;border:0;border-left:1px solid var(--border-strong);border-radius:0;box-shadow:none;padding:6px 0 6px 26px}
+.card h4,.card h3{font-family:var(--font-display);font-weight:800}
+.pill{border-radius:0;background:transparent;border:0;border-bottom:1px solid currentColor;padding:2px 0;font-style:italic}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent);font-style:italic}

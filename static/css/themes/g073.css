@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Song+Myung&family=Nanum+Brush+Script&family=Gowun+Batang&display=swap');
+/* 테마: 종이 에디토리얼 */
+:root{
+  --bg:#f5f4ed;--bg-soft:#e8e6dc;--surface:#faf9f5;--surface-2:#e8e6dc;
+  --border:#e8e6dc;--border-strong:rgba(20,20,19,0.28);
+  --text-1:#141413;--text-2:#3d3d3a;--text-3:#504e49;
+  --accent:#1b365d;--accent-2:#6b6a64;--accent-3:#4a6b3a;
+  --good:#4a6b3a;--warn:#8a6b1f;--bad:#8a3a30;
+  --grad:linear-gradient(135deg,#1b365d,#6b6a64);
+  --grad-soft:linear-gradient(135deg,rgba(27,54,93,0.12),rgba(107,106,100,0.12));
+  --radius:8px;--radius-sm:4px;--radius-lg:12px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Song Myung',serif;--font-sans:'Gowun Batang',serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background:
+  repeating-linear-gradient(97deg,transparent 0 9px,color-mix(in srgb,var(--text-1) 4%,transparent) 9px 10px),
+  repeating-linear-gradient(7deg,transparent 0 13px,color-mix(in srgb,var(--text-1) 3%,transparent) 13px 14px)}
+.slide::after{content:counter(sl);position:absolute;right:80px;bottom:60px;width:74px;height:74px;display:grid;place-items:center;border:4px double var(--bg);outline:3px solid var(--bad);background:var(--bad);color:var(--bg);font:400 32px var(--font-display);transform:rotate(-6deg);border-radius:6px}
+.h1,h1.title,.h2,h2.title{font-weight:400;letter-spacing:.02em}
+.h1,h1.title{font-size:80px;line-height:1.2}
+.kicker{font:400 40px 'Nanum Brush Script',cursive;text-transform:none;letter-spacing:0;color:var(--accent)}
+.card{background:color-mix(in srgb,var(--surface) 70%,transparent);border:0;border-radius:2px;border-top:2px solid var(--text-1);border-bottom:2px solid var(--text-1);box-shadow:none}
+.pill{border-radius:2px;background:var(--bad);color:var(--bg);border:0}
+.gradient-text{background:none;-webkit-text-fill-color:var(--bad);color:var(--bad)}

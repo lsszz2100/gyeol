@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;600;800;900&display=swap');
+/* 테마: AI 블루 */
+:root{
+  --bg:#ffffff;--bg-soft:#ffffff;--surface:#ffffff;--surface-2:#ffffff;
+  --border:#ebebeb;--border-strong:rgba(0,0,0,0.28);
+  --text-1:#000000;--text-2:#000000;--text-3:#666666;
+  --accent:#010120;--accent-2:#010120;--accent-3:#16a34a;
+  --good:#16a34a;--warn:#eab308;--bad:#dc2626;
+  --grad:linear-gradient(135deg,#010120,#010120);
+  --grad-soft:linear-gradient(135deg,rgba(1,1,32,0.12),rgba(1,1,32,0.12));
+  --radius:8px;--radius-sm:4px;--radius-lg:8px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Gothic A1',sans-serif;--font-sans:'Pretendard Variable',Pretendard,sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;z-index:-1;width:864px;height:864px;right:-302px;top:-367px;border-radius:50%;background:conic-gradient(from 90deg,var(--accent),var(--accent-2),var(--accent-3),var(--accent));filter:blur(80px);opacity:.38}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;left:96px;bottom:34px;font:800 14px var(--font-display);color:var(--text-3);letter-spacing:.2em}
+.h1,h1.title{font-weight:900;letter-spacing:-.05em}
+.h2,h2.title{font-weight:800;letter-spacing:-.045em}
+.kicker{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;padding:6px 14px 6px 10px;border-radius:99px;border:1px solid var(--border-strong);text-transform:none;letter-spacing:0;font-weight:600}
+.kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}
+.card{border-radius:22px}

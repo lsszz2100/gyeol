@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@400;600;800;900&display=swap');
+/* 테마: 로즈 파인 */
+:root{
+  --bg:#191724;--bg-soft:#1f1d2e;--surface:#26233a;--surface-2:#2a2740;
+  --border:rgba(224,222,244,.12);--border-strong:rgba(224,222,244,.24);
+  --text-1:#e0def4;--text-2:#c4b8d8;--text-3:#6e6a86;
+  --accent:#ebbcba;--accent-2:#c4a7e7;--accent-3:#9ccfd8;
+  --good:#31748f;--warn:#f6c177;--bad:#eb6f92;
+  --grad:linear-gradient(135deg,#ebbcba,#c4a7e7);
+  --grad-soft:linear-gradient(135deg,rgba(235,188,186,0.12),rgba(196,167,231,0.12));
+  --radius:14px;--radius-sm:10px;--radius-lg:22px;
+  --shadow:0 10px 30px rgba(0,0,0,0.45),0 2px 6px rgba(0,0,0,0.3);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.55),0 6px 16px rgba(0,0,0,0.35);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Gothic A1',sans-serif;--font-sans:'Pretendard Variable',Pretendard,sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;z-index:-1;width:864px;height:864px;right:-302px;top:-367px;border-radius:50%;background:conic-gradient(from 90deg,var(--accent),var(--accent-2),var(--accent-3),var(--accent));filter:blur(80px);opacity:.38}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;left:96px;bottom:34px;font:800 14px var(--font-display);color:var(--text-3);letter-spacing:.2em}
+.h1,h1.title{font-weight:900;letter-spacing:-.05em}
+.h2,h2.title{font-weight:800;letter-spacing:-.045em}
+.kicker{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;padding:6px 14px 6px 10px;border-radius:99px;border:1px solid var(--border-strong);text-transform:none;letter-spacing:0;font-weight:600}
+.kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 25%,transparent)}
+.card{border-radius:22px}

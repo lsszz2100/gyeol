@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&family=Jua&display=swap');
+/* 테마: 엔터프라이즈 블루 그리드 */
+:root{
+  --bg:#ffffff;--bg-soft:#edf5ff;--surface:#f4f4f4;--surface-2:#edf5ff;
+  --border:#c6c6c6;--border-strong:rgba(22,22,22,0.28);
+  --text-1:#161616;--text-2:#525252;--text-3:#6f6f6f;
+  --accent:#0f62fe;--accent-2:#8d8d8d;--accent-3:#24a148;
+  --good:#24a148;--warn:#f1c21b;--bad:#da1e28;
+  --grad:linear-gradient(135deg,#0f62fe,#8d8d8d);
+  --grad-soft:linear-gradient(135deg,rgba(15,98,254,0.12),rgba(141,141,141,0.12));
+  --radius:0px;--radius-sm:0px;--radius-lg:0px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Jua',sans-serif;--font-sans:'Jua',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.deck,.slide{background:var(--accent)}
+.slide{padding:72px 120px}
+.slide::before{content:"";position:absolute;inset:40px;z-index:-1;background:var(--bg);border-radius:44px;border:4px solid var(--text-1);box-shadow:12px 12px 0 var(--text-1)}
+.slide.with-photo{padding-right:calc(40% + 40px)}
+.g-photo{top:44px;bottom:44px;right:44px;width:calc(40% - 44px);border-radius:0 40px 40px 0}
+.slide::after{content:counter(sl) "/";position:absolute;top:20px;right:30px;width:96px;height:96px;display:grid;place-items:center;border-radius:50%;background:var(--accent-2);border:4px solid var(--text-1);font:400 30px var(--font-display);transform:rotate(12deg);color:var(--text-1)}
+.h1,h1.title,.h2,h2.title{font-weight:400}
+.lede{font-size:26px}
+.kicker{display:inline-block;align-self:flex-start;background:var(--text-1);color:var(--bg);padding:8px 20px;border-radius:24px 24px 24px 4px;font-family:var(--font-display);font-weight:400;text-transform:none;letter-spacing:0;font-size:20px}
+.card{border:3px solid var(--text-1);border-radius:26px;box-shadow:6px 6px 0 var(--text-1)}
+.pill{border:3px solid var(--text-1);background:var(--accent-2);color:var(--text-1);font-size:17px;transform:rotate(-3deg)}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent)}

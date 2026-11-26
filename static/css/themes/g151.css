@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300;500;800&display=swap');
+/* 테마: 미팅 블루 */
+:root{
+  --bg:#f6f8fb;--bg-soft:#eef8f6;--surface:#ffffff;--surface-2:#eef8f6;
+  --border:#dbe4ee;--border-strong:rgba(15,23,42,0.28);
+  --text-1:#0f172a;--text-2:#334155;--text-3:#64748b;
+  --accent:#00a3a6;--accent-2:#00a3a6;--accent-3:#22c55e;
+  --good:#22c55e;--warn:#f59e0b;--bad:#e11d48;
+  --grad:linear-gradient(135deg,#00a3a6,#00a3a6);
+  --grad-soft:linear-gradient(135deg,rgba(0,163,166,0.12),rgba(0,163,166,0.12));
+  --radius:18px;--radius-sm:12px;--radius-lg:28px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Pretendard Variable',Pretendard,sans-serif;--font-sans:'Gothic A1',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:-20%;z-index:-1;filter:blur(60px);opacity:.55;
+  background:radial-gradient(closest-side at 20% 25%,var(--accent),transparent),radial-gradient(closest-side at 80% 70%,var(--accent-2),transparent),radial-gradient(closest-side at 65% 15%,var(--accent-3),transparent)}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;bottom:32px;right:48px;font:500 14px var(--font-sans);padding:6px 14px;border-radius:99px;background:color-mix(in srgb,var(--surface) 40%,transparent);backdrop-filter:blur(10px);border:1px solid var(--border)}
+.h1,h1.title{font-weight:800;letter-spacing:-.04em}
+.kicker{display:inline-block;align-self:flex-start;padding:6px 14px;border-radius:99px;background:color-mix(in srgb,var(--surface) 35%,transparent);backdrop-filter:blur(10px);border:1px solid var(--border);text-transform:none;letter-spacing:.02em}
+.card{background:color-mix(in srgb,var(--surface) 45%,transparent);backdrop-filter:blur(18px) saturate(140%);border:1px solid color-mix(in srgb,var(--text-1) 14%,transparent);border-radius:28px}
+.pill{background:color-mix(in srgb,var(--surface) 40%,transparent);backdrop-filter:blur(8px)}

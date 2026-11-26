@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap');
+/* 테마: 프렌들리 */
+:root{
+  --bg:#fff8d7;--bg-soft:#ffef9f;--surface:#ffffff;--surface-2:#ffef9f;
+  --border:#eadfba;--border-strong:rgba(29,24,54,0.28);
+  --text-1:#1d1836;--text-2:#4c426c;--text-3:#796f91;
+  --accent:#ff6b00;--accent-2:#ff6b00;--accent-3:#2e9d57;
+  --good:#2e9d57;--warn:#ffb020;--bad:#e5484d;
+  --grad:linear-gradient(135deg,#ff6b00,#ff6b00);
+  --grad-soft:linear-gradient(135deg,rgba(255,107,0,0.12),rgba(255,107,0,0.12));
+  --radius:16px;--radius-sm:10px;--radius-lg:24px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Jua',sans-serif;--font-sans:'Gowun Dodum','Jua',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;z-index:-1;width:497px;height:432px;right:-65px;top:-86px;background:var(--accent-2);opacity:.45;border-radius:58% 42% 63% 37%/45% 55% 45% 55%}
+.slide{padding-bottom:110px}
+.slide:has(.grid,.stack,.card,ul)::before{width:340px;height:296px;right:-120px;top:-130px}
+.slide::after{content:counter(sl);position:absolute;z-index:-1;left:-70px;bottom:-90px;width:250px;height:250px;display:flex;align-items:flex-start;justify-content:flex-end;padding:44px 64px 0 0;font:400 40px var(--font-display);color:var(--text-1);background:var(--accent-3);opacity:.6;border-radius:44% 56% 38% 62%/58% 39% 61% 42%}
+.h1,h1.title,.h2,h2.title{font-weight:400}
+.kicker{font-family:var(--font-display);font-weight:400;text-transform:none;letter-spacing:0;font-size:22px}
+.card{border-radius:36px;border:0;box-shadow:0 14px 0 color-mix(in srgb,var(--accent) 25%,transparent)}
+.pill{font-family:var(--font-display);background:var(--accent);color:var(--bg);border:0;padding:6px 16px;font-size:16px}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent)}

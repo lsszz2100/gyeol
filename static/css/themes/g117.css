@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbit&family=Gothic+A1:wght@500;800&display=swap');
+/* 테마: 레트로 */
+:root{
+  --bg:#fff4cf;--bg-soft:#ffdca8;--surface:#fffaf0;--surface-2:#ffdca8;
+  --border:#d9aa7a;--border-strong:rgba(42,24,16,0.28);
+  --text-1:#2a1810;--text-2:#593625;--text-3:#8a6652;
+  --accent:#d24b1f;--accent-2:#d24b1f;--accent-3:#3d8f4f;
+  --good:#3d8f4f;--warn:#f2a93b;--bad:#b83a2f;
+  --grad:linear-gradient(135deg,#d24b1f,#d24b1f);
+  --grad-soft:linear-gradient(135deg,rgba(210,75,31,0.12),rgba(210,75,31,0.12));
+  --radius:8px;--radius-sm:4px;--radius-lg:12px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Orbit',sans-serif;--font-sans:'Gothic A1',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:0;z-index:-1;background:conic-gradient(var(--surface-2) 25%,transparent 0 50%,var(--surface-2) 0 75%,transparent 0) 0 0/40px 40px;opacity:.6}
+.slide::after{content:"▶ " counter(sl) ".PPT";position:absolute;left:0;right:0;bottom:0;padding:10px 24px;background:var(--surface-2);border-top:3px solid var(--text-1);font:400 16px var(--font-display)}
+.h1,h1.title,.h2,h2.title{font-weight:400}
+.kicker{font-family:var(--font-display);text-transform:none;letter-spacing:.04em}
+.card{border-radius:0;border:3px solid var(--text-1);box-shadow:6px 6px 0 var(--text-1);padding-top:56px;background:var(--surface)}
+.card::before{content:"● ● ●";position:absolute;left:0;right:0;top:0;height:34px;padding:0 12px;display:flex;align-items:center;justify-content:flex-end;letter-spacing:4px;font-size:12px;color:var(--bg);background:var(--accent);border-bottom:3px solid var(--text-1)}
+.pill{border-radius:0;border:2px solid var(--text-1);box-shadow:3px 3px 0 var(--text-1);font-family:var(--font-display)}
+.gradient-text{background:linear-gradient(transparent 12%,var(--accent) 12%,var(--accent) 92%,transparent 92%);-webkit-text-fill-color:var(--bg);color:var(--bg);padding:0 8px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+div.gradient-text,p.gradient-text{background:var(--accent);padding:6px 20px 10px}

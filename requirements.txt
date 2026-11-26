@@ -1,0 +1,7 @@
+# GYEOL - Python packages
+pywebview>=5.0
+python-pptx>=1.0
+pymupdf>=1.24
+pystray>=0.19
+playwright>=1.40
+imageio-ffmpeg>=0.5   # 동영상(MP4) 내보내기 인코더

@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Playfair+Display:ital,wght@1,400;1,600&display=swap');
+/* 테마: 에디토리얼 명조 */
+:root{
+  --bg:#faf7f2;--bg-soft:#f3efe6;--surface:#ffffff;--surface-2:#f7f2e8;
+  --border:rgba(40,28,18,.12);--border-strong:rgba(40,28,18,.24);
+  --text-1:#1b1410;--text-2:#5c4a3e;--text-3:#8a7868;
+  --accent:#8a2a1c;--accent-2:#c97a4a;--accent-3:#1b1410;
+  --good:#3f7d4f;--warn:#b07a1f;--bad:#8a2a1c;
+  --grad:linear-gradient(135deg,#8a2a1c,#c97a4a);
+  --grad-soft:linear-gradient(135deg,rgba(138,42,28,0.12),rgba(201,122,74,0.12));
+  --radius:4px;--radius-sm:2px;--radius-lg:8px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Nanum Myeongjo',serif;--font-sans:'Pretendard Variable',Pretendard,sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide{padding:96px 140px}
+.slide::before{content:"";position:absolute;inset:36px 56px;z-index:-1;border-top:3px double var(--text-1);border-bottom:1px solid var(--text-1)}
+.slide::after{content:"— " counter(sl) " —";position:absolute;bottom:46px;left:0;right:0;text-align:center;font:italic 400 18px 'Playfair Display',serif;color:var(--text-3)}
+.h1,h1.title{font-weight:800;font-size:78px;letter-spacing:-.03em;line-height:1.15}
+.h2,h2.title{font-weight:700;letter-spacing:-.025em;line-height:1.2}
+.kicker{font:italic 600 22px 'Playfair Display',serif;text-transform:none;letter-spacing:0;color:var(--accent)}
+.lede{font-family:var(--font-display);font-weight:400;font-size:24px}
+.card{background:transparent;border:0;border-left:1px solid var(--border-strong);border-radius:0;box-shadow:none;padding:6px 0 6px 26px}
+.card h4,.card h3{font-family:var(--font-display);font-weight:800}
+.pill{border-radius:0;background:transparent;border:0;border-bottom:1px solid currentColor;padding:2px 0;font-style:italic}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent);font-style:italic}

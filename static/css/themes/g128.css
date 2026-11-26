@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Gowun+Dodum&display=swap');
+/* 테마: 스페이스 블랙 */
+:root{
+  --bg:#000000;--bg-soft:#000000;--surface:#000000;--surface-2:#000000;
+  --border:rgba(240,240,250,0.12);--border-strong:rgba(240,240,250,0.28);
+  --text-1:#f0f0fa;--text-2:#f0f0fa;--text-3:#f0f0fa;
+  --accent:#f0f0fa;--accent-2:#f0f0fa;--accent-3:#16a34a;
+  --good:#16a34a;--warn:#eab308;--bad:#dc2626;
+  --grad:linear-gradient(135deg,#f0f0fa,#f0f0fa);
+  --grad-soft:linear-gradient(135deg,rgba(240,240,250,0.12),rgba(240,240,250,0.12));
+  --radius:4px;--radius-sm:4px;--radius-lg:4px;
+  --shadow:0 10px 30px rgba(0,0,0,0.45),0 2px 6px rgba(0,0,0,0.3);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.55),0 6px 16px rgba(0,0,0,0.35);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Bagel Fat One',sans-serif;--font-sans:'Gowun Dodum',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;z-index:-1;width:670px;height:670px;border-radius:50%;background:var(--accent);right:-151px;bottom:-194px}
+.slide:has(.h2,.grid,.stack,.card,ul)::before{width:340px;height:340px;right:-150px;bottom:-170px}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;z-index:-1;left:60px;bottom:28px;font:400 120px/1 var(--font-display);color:transparent;-webkit-text-stroke:2px var(--text-1);opacity:.35}
+.h1,h1.title{font-weight:400;font-size:104px;line-height:.98;letter-spacing:-.02em}
+.h2,h2.title{font-weight:400;font-size:64px;line-height:1.05}
+.kicker{font-family:var(--font-display);font-weight:400;font-size:20px;color:var(--accent-2)}
+.card{border-radius:40px;border:0;box-shadow:none;background:var(--surface-2)}
+.pill{background:var(--text-1);color:var(--bg);border:0;padding:8px 18px;font-size:15px}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent)}

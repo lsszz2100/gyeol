@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap');
+/* 테마: 스위스 그리드 */
+:root{
+  --bg:#ffffff;--bg-soft:#f4f4f4;--surface:#ffffff;--surface-2:#f4f4f4;
+  --border:#111111;--border-strong:#111111;
+  --text-1:#111111;--text-2:#444444;--text-3:#888888;
+  --accent:#d6001c;--accent-2:#111111;--accent-3:#888888;
+  --good:#0f8a2f;--warn:#d38a00;--bad:#d6001c;
+  --grad:linear-gradient(135deg,#d6001c,#111111);
+  --grad-soft:linear-gradient(135deg,rgba(214,0,28,0.12),rgba(17,17,17,0.12));
+  --radius:0;--radius-sm:0;--radius-lg:0;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Pretendard Variable',Pretendard,sans-serif;--font-sans:'IBM Plex Sans KR',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide{justify-content:flex-start;padding-top:120px;border-top:14px solid var(--accent)}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;top:34px;right:64px;font:800 64px/1 var(--font-display);color:var(--text-1);letter-spacing:-.04em}
+.slide::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,color-mix(in srgb,var(--text-1) 6%,transparent) 1px,transparent 1px) 0 0/calc(100%/12) 100%}
+.h1,h1.title{font-weight:900;font-size:84px;letter-spacing:-.05em;line-height:.98}
+.h2,h2.title{font-weight:800;letter-spacing:-.045em}
+.kicker{color:var(--text-1);font-weight:700;letter-spacing:.02em;text-transform:none;font-size:18px}
+.kicker::before{content:"■ ";color:var(--accent)}
+.card{border-radius:0;box-shadow:none;border:0;border-top:4px solid var(--text-1);background:transparent;padding:20px 0 0}
+.pill{border-radius:0;background:var(--text-1);color:var(--bg);border:0;font-weight:700}
+.divider-accent{width:120px;height:8px;border-radius:0}

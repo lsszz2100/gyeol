@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Pen+Script&family=Do+Hyeon&display=swap');
+/* 테마: 스캐터브레인 */
+:root{
+  --bg:#F7F5F0;--bg-soft:#B2F2BB;--surface:#F7F5F0;--surface-2:#B2F2BB;
+  --border:rgba(45,42,38,0.14);--border-strong:rgba(45,42,38,0.32);
+  --text-1:#2D2A26;--text-2:rgba(45,42,38,0.78);--text-3:rgba(45,42,38,0.55);
+  --accent:#2D2A26;--accent-2:#D0BFFF;--accent-3:#A5D8FF;
+  --good:#1aaf6c;--warn:#f5a524;--bad:#e0445a;
+  --grad:linear-gradient(135deg,#2D2A26,#D0BFFF);
+  --grad-soft:linear-gradient(135deg,rgba(45,42,38,0.12),rgba(208,191,255,0.12));
+  --radius:14px;--radius-sm:8px;--radius-lg:22px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Do Hyeon',sans-serif;--font-sans:'Gowun Dodum',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(180deg,transparent 0 47px,color-mix(in srgb,var(--accent-2) 30%,transparent) 47px 48px),linear-gradient(90deg,transparent 110px,color-mix(in srgb,var(--bad) 45%,transparent) 110px 112px,transparent 112px)}
+.slide{padding-left:150px}
+.slide::after{content:"p." counter(sl);position:absolute;bottom:26px;right:50px;font:400 34px 'Nanum Pen Script',cursive;color:var(--text-2)}
+.h1,h1.title,.h2,h2.title{font-weight:400}
+.kicker{font:400 34px 'Nanum Pen Script',cursive;text-transform:none;letter-spacing:0;color:var(--accent)}
+.card{border-radius:4px;box-shadow:0 8px 18px rgba(0,0,0,.08);transform:rotate(-1deg);overflow:visible}
+.card:nth-child(2n){transform:rotate(1.2deg)}
+.card::before{content:"";position:absolute;top:-14px;left:50%;width:110px;height:28px;transform:translateX(-50%) rotate(-3deg);background:color-mix(in srgb,var(--accent) 45%,transparent)}
+.gradient-text{background:linear-gradient(transparent 55%,color-mix(in srgb,var(--accent) 55%,transparent) 55%);-webkit-text-fill-color:var(--text-1);color:var(--text-1)}
+.pill{font:400 22px 'Nanum Pen Script',cursive;border-style:dashed}

@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Nanum+Pen+Script&family=Do+Hyeon&display=swap');
+/* 테마: 스프레드 블루 */
+:root{
+  --bg:#ffffff;--bg-soft:#ffffff;--surface:#ffffff;--surface-2:#ffffff;
+  --border:#e0e2e6;--border-strong:rgba(24,29,38,0.28);
+  --text-1:#181d26;--text-2:#333333;--text-3:#181d26;
+  --accent:#1b61c9;--accent-2:#1b61c9;--accent-3:#006400;
+  --good:#006400;--warn:#eab308;--bad:#dc2626;
+  --grad:linear-gradient(135deg,#1b61c9,#1b61c9);
+  --grad-soft:linear-gradient(135deg,rgba(27,97,201,0.12),rgba(27,97,201,0.12));
+  --radius:16px;--radius-sm:12px;--radius-lg:24px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Do Hyeon',sans-serif;--font-sans:'Gowun Dodum',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(180deg,transparent 0 47px,color-mix(in srgb,var(--accent-2) 30%,transparent) 47px 48px),linear-gradient(90deg,transparent 110px,color-mix(in srgb,var(--bad) 45%,transparent) 110px 112px,transparent 112px)}
+.slide{padding-left:150px}
+.slide::after{content:"p." counter(sl);position:absolute;bottom:26px;right:50px;font:400 34px 'Nanum Pen Script',cursive;color:var(--text-2)}
+.h1,h1.title,.h2,h2.title{font-weight:400}
+.kicker{font:400 34px 'Nanum Pen Script',cursive;text-transform:none;letter-spacing:0;color:var(--accent)}
+.card{border-radius:4px;box-shadow:0 8px 18px rgba(0,0,0,.08);transform:rotate(-1deg);overflow:visible}
+.card:nth-child(2n){transform:rotate(1.2deg)}
+.card::before{content:"";position:absolute;top:-14px;left:50%;width:110px;height:28px;transform:translateX(-50%) rotate(-3deg);background:color-mix(in srgb,var(--accent) 45%,transparent)}
+.gradient-text{background:linear-gradient(transparent 55%,color-mix(in srgb,var(--accent) 55%,transparent) 55%);-webkit-text-fill-color:var(--text-1);color:var(--text-1)}
+.pill{font:400 22px 'Nanum Pen Script',cursive;border-style:dashed}

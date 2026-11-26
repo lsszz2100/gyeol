@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;600;700&display=swap');
+/* 테마: 아틱 쿨 */
+:root{
+  --bg:#f2f6fb;--bg-soft:#e7eef7;--surface:#ffffff;--surface-2:#edf3fa;
+  --border:rgba(40,70,110,.12);--border-strong:rgba(40,70,110,.24);
+  --text-1:#0e1f33;--text-2:#3a5778;--text-3:#6b819b;
+  --accent:#1e6fb0;--accent-2:#17b1b1;--accent-3:#6f8aa6;
+  --good:#1aaf84;--warn:#d19030;--bad:#c5485a;
+  --grad:linear-gradient(135deg,#1e6fb0,#17b1b1);
+  --grad-soft:linear-gradient(135deg,rgba(30,111,176,0.12),rgba(23,177,177,0.12));
+  --radius:14px;--radius-sm:10px;--radius-lg:22px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Pretendard Variable',Pretendard,sans-serif;--font-sans:'IBM Plex Sans KR',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide{justify-content:flex-start;padding-top:120px;border-top:14px solid var(--accent)}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;top:34px;right:64px;font:800 64px/1 var(--font-display);color:var(--text-1);letter-spacing:-.04em}
+.slide::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,color-mix(in srgb,var(--text-1) 6%,transparent) 1px,transparent 1px) 0 0/calc(100%/12) 100%}
+.h1,h1.title{font-weight:900;font-size:84px;letter-spacing:-.05em;line-height:.98}
+.h2,h2.title{font-weight:800;letter-spacing:-.045em}
+.kicker{color:var(--text-1);font-weight:700;letter-spacing:.02em;text-transform:none;font-size:18px}
+.kicker::before{content:"■ ";color:var(--accent)}
+.card{border-radius:0;box-shadow:none;border:0;border-top:4px solid var(--text-1);background:transparent;padding:20px 0 0}
+.pill{border-radius:0;background:var(--text-1);color:var(--bg);border:0;font-weight:700}
+.divider-accent{width:120px;height:8px;border-radius:0}

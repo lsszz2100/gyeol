@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Gowun+Dodum&display=swap');
+/* 테마: 코랄 포스터 */
+:root{
+  --bg:#F5F0E8;--bg-soft:#E8E0D4;--surface:#F5F0E8;--surface-2:#E8E0D4;
+  --border:rgba(26,26,26,0.14);--border-strong:rgba(26,26,26,0.32);
+  --text-1:#1A1A1A;--text-2:rgba(26,26,26,0.78);--text-3:rgba(26,26,26,0.55);
+  --accent:#E85D5D;--accent-2:#D44A4A;--accent-3:#6B6B6B;
+  --good:#1aaf6c;--warn:#f5a524;--bad:#e0445a;
+  --grad:linear-gradient(135deg,#E85D5D,#D44A4A);
+  --grad-soft:linear-gradient(135deg,rgba(232,93,93,0.12),rgba(212,74,74,0.12));
+  --radius:14px;--radius-sm:8px;--radius-lg:22px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Bagel Fat One',sans-serif;--font-sans:'Gowun Dodum',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;z-index:-1;width:670px;height:670px;border-radius:50%;background:var(--accent);right:-151px;bottom:-194px}
+.slide:has(.h2,.grid,.stack,.card,ul)::before{width:340px;height:340px;right:-150px;bottom:-170px}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;z-index:-1;left:60px;bottom:28px;font:400 120px/1 var(--font-display);color:transparent;-webkit-text-stroke:2px var(--text-1);opacity:.35}
+.h1,h1.title{font-weight:400;font-size:104px;line-height:.98;letter-spacing:-.02em}
+.h2,h2.title{font-weight:400;font-size:64px;line-height:1.05}
+.kicker{font-family:var(--font-display);font-weight:400;font-size:20px;color:var(--accent-2)}
+.card{border-radius:40px;border:0;box-shadow:none;background:var(--surface-2)}
+.pill{background:var(--text-1);color:var(--bg);border:0;padding:8px 18px;font-size:15px}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent)}

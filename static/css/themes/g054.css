@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Sunflower:wght@300;500;700&display=swap');
+/* 테마: 에너제틱 */
+:root{
+  --bg:#fff8d7;--bg-soft:#ffef9f;--surface:#ffffff;--surface-2:#ffef9f;
+  --border:#eadfba;--border-strong:rgba(29,24,54,0.28);
+  --text-1:#1d1836;--text-2:#4c426c;--text-3:#796f91;
+  --accent:#ff6b00;--accent-2:#ff6b00;--accent-3:#2e9d57;
+  --good:#2e9d57;--warn:#ffb020;--bad:#e5484d;
+  --grad:linear-gradient(135deg,#ff6b00,#ff6b00);
+  --grad-soft:linear-gradient(135deg,rgba(255,107,0,0.12),rgba(255,107,0,0.12));
+  --radius:16px;--radius-sm:10px;--radius-lg:24px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Do Hyeon',sans-serif;--font-sans:'Sunflower',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(circle,var(--accent-2) 3px,transparent 3.5px) 85% 12%/26px 26px no-repeat,
+  conic-gradient(from 210deg at 50% 0,transparent 0 120deg,var(--accent) 120deg 240deg,transparent 240deg) 92% 78%/120px 104px no-repeat,
+  radial-gradient(circle,color-mix(in srgb,var(--accent-2) 70%,transparent) 2.5px,transparent 3px) 0 0/30px 30px;
+  -webkit-mask:linear-gradient(90deg,transparent 55%,#000 75%);mask:linear-gradient(90deg,transparent 55%,#000 75%)}
+.slide::after{content:"";position:absolute;left:70px;bottom:44px;width:220px;height:22px;z-index:-1;
+  background:linear-gradient(135deg,var(--accent-3) 25%,transparent 25%) -11px 0/22px 22px,linear-gradient(225deg,var(--accent-3) 25%,transparent 25%) -11px 0/22px 22px}
+.h1,h1.title,.h2,h2.title{font-weight:400}
+.h1,h1.title{font-size:92px;line-height:1.02}
+.kicker{font-family:var(--font-display);font-weight:400;font-size:24px;text-transform:none;letter-spacing:0}
+.card{border:3px solid var(--text-1);border-radius:14px;box-shadow:8px 8px 0 var(--accent)}
+.card:nth-child(3n+2){box-shadow:8px 8px 0 var(--accent-2)}
+.card:nth-child(3n){box-shadow:8px 8px 0 var(--accent-3)}
+.pill{border:2px solid var(--text-1);font-family:var(--font-display);font-size:16px}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent);text-shadow:4px 4px 0 var(--accent-2)}

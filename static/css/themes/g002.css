@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Gothic+A1:wght@400;700&display=swap');
+/* 테마: 드라큘라 퍼플 */
+:root{
+  --bg:#282a36;--bg-soft:#21222c;--surface:#343746;--surface-2:#44475a;
+  --border:rgba(248,248,242,.12);--border-strong:rgba(248,248,242,.24);
+  --text-1:#f8f8f2;--text-2:#bdbde0;--text-3:#6272a4;
+  --accent:#bd93f9;--accent-2:#ff79c6;--accent-3:#8be9fd;
+  --good:#50fa7b;--warn:#f1fa8c;--bad:#ff5555;
+  --grad:linear-gradient(135deg,#bd93f9,#ff79c6);
+  --grad-soft:linear-gradient(135deg,rgba(189,147,249,0.12),rgba(255,121,198,0.12));
+  --radius:12px;--radius-sm:8px;--radius-lg:18px;
+  --shadow:0 10px 30px rgba(0,0,0,0.45),0 2px 6px rgba(0,0,0,0.3);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.55),0 6px 16px rgba(0,0,0,0.35);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Black Han Sans',sans-serif;--font-sans:'Gothic A1',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;left:-20%;right:-20%;bottom:-10%;height:45%;z-index:-1;transform:perspective(400px) rotateX(62deg);transform-origin:bottom;opacity:.5;
+  background:linear-gradient(var(--accent) 2px,transparent 2px) 0 0/100% 48px,linear-gradient(90deg,var(--accent) 2px,transparent 2px) 0 0/64px 100%;
+  -webkit-mask:linear-gradient(transparent,#000);mask:linear-gradient(transparent,#000)}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;top:30px;right:44px;font:400 30px var(--font-display);color:var(--accent-2);text-shadow:0 0 10px var(--accent-2),0 0 26px var(--accent-2)}
+.h1,h1.title,.h2,h2.title{font-weight:400;text-shadow:0 0 14px color-mix(in srgb,var(--accent) 80%,transparent),0 0 40px color-mix(in srgb,var(--accent) 50%,transparent)}
+.gradient-text{background:none;-webkit-text-fill-color:var(--accent);color:var(--accent)}
+.kicker{color:var(--accent-2);text-shadow:0 0 8px var(--accent-2)}
+.card{background:color-mix(in srgb,var(--bg) 75%,transparent);border:2px solid var(--accent);border-radius:14px;box-shadow:0 0 18px color-mix(in srgb,var(--accent) 55%,transparent),inset 0 0 18px color-mix(in srgb,var(--accent) 25%,transparent)}
+.pill{border-color:var(--accent-2);color:var(--accent-2);background:transparent;box-shadow:0 0 10px color-mix(in srgb,var(--accent-2) 60%,transparent)}

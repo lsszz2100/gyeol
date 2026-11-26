@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Gothic+A1:wght@300;500;800&display=swap');
+/* 테마: 볼트 그린 */
+:root{
+  --bg:#07110c;--bg-soft:#14281e;--surface:#101c16;--surface-2:#14281e;
+  --border:#254132;--border-strong:rgba(244,255,248,0.28);
+  --text-1:#f4fff8;--text-2:#c8dfd0;--text-3:#8ba493;
+  --accent:#7cff6b;--accent-2:#7cff6b;--accent-3:#52e875;
+  --good:#52e875;--warn:#facc15;--bad:#fb7185;
+  --grad:linear-gradient(135deg,#7cff6b,#7cff6b);
+  --grad-soft:linear-gradient(135deg,rgba(124,255,107,0.12),rgba(124,255,107,0.12));
+  --radius:12px;--radius-sm:8px;--radius-lg:18px;
+  --shadow:0 10px 30px rgba(0,0,0,0.45),0 2px 6px rgba(0,0,0,0.3);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.55),0 6px 16px rgba(0,0,0,0.35);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Pretendard Variable',Pretendard,sans-serif;--font-sans:'Gothic A1',sans-serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:-20%;z-index:-1;filter:blur(60px);opacity:.55;
+  background:radial-gradient(closest-side at 20% 25%,var(--accent),transparent),radial-gradient(closest-side at 80% 70%,var(--accent-2),transparent),radial-gradient(closest-side at 65% 15%,var(--accent-3),transparent)}
+.slide::after{content:counter(sl,decimal-leading-zero);position:absolute;bottom:32px;right:48px;font:500 14px var(--font-sans);padding:6px 14px;border-radius:99px;background:color-mix(in srgb,var(--surface) 40%,transparent);backdrop-filter:blur(10px);border:1px solid var(--border)}
+.h1,h1.title{font-weight:800;letter-spacing:-.04em}
+.kicker{display:inline-block;align-self:flex-start;padding:6px 14px;border-radius:99px;background:color-mix(in srgb,var(--surface) 35%,transparent);backdrop-filter:blur(10px);border:1px solid var(--border);text-transform:none;letter-spacing:.02em}
+.card{background:color-mix(in srgb,var(--surface) 45%,transparent);backdrop-filter:blur(18px) saturate(140%);border:1px solid color-mix(in srgb,var(--text-1) 14%,transparent);border-radius:28px}
+.pill{background:color-mix(in srgb,var(--surface) 40%,transparent);backdrop-filter:blur(8px)}

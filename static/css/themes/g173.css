@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Song+Myung&family=Nanum+Brush+Script&family=Gowun+Batang&display=swap');
+/* 테마: 우드 매트 */
+:root{
+  --bg:#f0e8d2;--bg-soft:#ede6d0;--surface:#f0e8d2;--surface-2:#ede6d0;
+  --border:rgba(35,46,38,0.14);--border-strong:rgba(35,46,38,0.32);
+  --text-1:#232e26;--text-2:rgba(35,46,38,0.78);--text-3:rgba(35,46,38,0.55);
+  --accent:#c07030;--accent-2:#7a4e24;--accent-3:#2e3d30;
+  --good:#1aaf6c;--warn:#f5a524;--bad:#e0445a;
+  --grad:linear-gradient(135deg,#c07030,#7a4e24);
+  --grad-soft:linear-gradient(135deg,rgba(192,112,48,0.12),rgba(122,78,36,0.12));
+  --radius:14px;--radius-sm:8px;--radius-lg:22px;
+  --shadow:0 10px 30px rgba(0,0,0,0.08),0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:0 24px 60px rgba(0,0,0,0.14),0 6px 16px rgba(0,0,0,0.06);
+}
+.kicker{color:var(--accent)}
+.divider-accent{background:var(--accent)}
+:root{--font-display:'Song Myung',serif;--font-sans:'Gowun Batang',serif;}
+
+.deck{counter-reset:sl}
+.slide{counter-increment:sl;isolation:isolate}
+.slide::before,.slide::after{pointer-events:none}
+
+.slide::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;background:
+  repeating-linear-gradient(97deg,transparent 0 9px,color-mix(in srgb,var(--text-1) 4%,transparent) 9px 10px),
+  repeating-linear-gradient(7deg,transparent 0 13px,color-mix(in srgb,var(--text-1) 3%,transparent) 13px 14px)}
+.slide::after{content:counter(sl);position:absolute;right:80px;bottom:60px;width:74px;height:74px;display:grid;place-items:center;border:4px double var(--bg);outline:3px solid var(--bad);background:var(--bad);color:var(--bg);font:400 32px var(--font-display);transform:rotate(-6deg);border-radius:6px}
+.h1,h1.title,.h2,h2.title{font-weight:400;letter-spacing:.02em}
+.h1,h1.title{font-size:80px;line-height:1.2}
+.kicker{font:400 40px 'Nanum Brush Script',cursive;text-transform:none;letter-spacing:0;color:var(--accent)}
+.card{background:color-mix(in srgb,var(--surface) 70%,transparent);border:0;border-radius:2px;border-top:2px solid var(--text-1);border-bottom:2px solid var(--text-1);box-shadow:none}
+.pill{border-radius:2px;background:var(--bad);color:var(--bg);border:0}
+.gradient-text{background:none;-webkit-text-fill-color:var(--bad);color:var(--bad)}

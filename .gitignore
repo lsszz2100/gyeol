@@ -43,3 +43,5 @@ tools/build_icons.py
 tools/lucide-sprite.svg
 tools/pptx_survey.py
 packaging/build_py.local.txt
+tools/pptx_survey2.py
+tools/survey2_report.py

@@ -303,7 +303,7 @@
       if (window.__noMotion || document.documentElement.getAttribute('data-preview')) return '';
       return (getComputedStyle(document.documentElement).getPropertyValue('--gyeol-motion') || '').trim().replace(/["']/g,'');
     }
-    const MOTION_BOX = '.grid,.chev,.funnel,.pyramid,.stair,.swot,.mx,.hub,.pricing,.pc,.numlist,.tl,.stack,.vbars,.cycle,.venn,tbody,ul,ol,.row';
+    const MOTION_BOX = '.grid,.chev,.funnel,.pyramid,.stair,.swot,.mx,.hub,.pricing,.pc,.numlist,.tl,.stack,.vbars,.cycle,.venn,.team,.feat,.voice,.ms,.org,.org-row,.contact,.agenda,tbody,ul,ol,.row';
     let motionBase = 0, motionEnd = 0; const counters = [];
     function playMotion(slide){
       const lv = motionLevel();
@@ -314,11 +314,22 @@
       let t = rich ? 120 : 60;
       const step = rich ? 130 : 80;
       motionBase = performance.now(); counters.length = 0; motionEnd = 0;
-      const run = (el, kf, dur, delay) => { const a = el.animate(kf, {duration: dur, delay: delay, easing: ease, fill: 'both'}); a.id = 'gm'; motionEnd = Math.max(motionEnd, delay + dur); };
+      const run = (el, kf, dur, delay, easing) => { const a = el.animate(kf, {duration: dur, delay: delay, easing: easing || ease, fill: 'both'}); a.id = 'gm'; motionEnd = Math.max(motionEnd, delay + dur); };
       const fadeUp = (el, d) => run(el, [{opacity:0, translate:'0 ' + (rich ? 34 : 18) + 'px'}, {opacity:1, translate:'0 0'}], rich ? 700 : 520, d);
       // 1) 머리글
       const head = [...slide.children].filter(el => el.matches('.kicker,h1,h2,h3,.h1,.h2,.lede,p') && !el.matches('.notes'));
-      head.forEach(el => { if (rich && el.matches('h1,h2,.h1,.h2')) run(el, [{opacity:0, clipPath:'inset(0 100% 0 0)'}, {opacity:1, clipPath:'inset(0 0 0 0)'}], 800, t); else fadeUp(el, t); t += step; });
+      head.forEach(el => {
+        const n = (el.textContent || '').trim().length;
+        // 화려하게: 짧은 제목은 한 글자씩 드러나고, 긴 제목은 왼쪽부터 닦아내듯
+        if (rich && el.matches('h1,h2,.h1,.h2') && n && n <= 28) run(el, [{opacity:1, clipPath:'inset(0 100% 0 0)'}, {opacity:1, clipPath:'inset(0 0 0 0)'}], Math.max(500, n * 55), t, `steps(${n}, end)`);
+        else if (rich && el.matches('h1,h2,.h1,.h2')) run(el, [{opacity:0, clipPath:'inset(0 100% 0 0)'}, {opacity:1, clipPath:'inset(0 0 0 0)'}], 800, t);
+        else fadeUp(el, t);
+        t += step;
+      });
+      // 꾸밈: 큰 배경 글자는 천천히 번지고, 블롭·배지는 커지며 등장
+      slide.querySelectorAll(':scope>.ghost').forEach(el => run(el, [{opacity:0, letterSpacing:'.2em'}, {opacity:1, letterSpacing:'-.04em'}], rich ? 1400 : 900, 0));
+      slide.querySelectorAll(':scope>.blob,.badge').forEach(el => run(el, [{opacity:0, scale:'.5'}, {opacity:1, scale:'1'}], 800, 100));
+      slide.querySelectorAll(':scope>.sect>b').forEach(el => run(el, [{opacity:0, translate:'-60px 0'}, {opacity:1, translate:'0 0'}], 700, 0));
       // 2) 내용 묶음: 바깥 묶음만 골라 그 안의 항목을 차례로
       const boxes = [...slide.querySelectorAll(MOTION_BOX)].filter(b => !b.closest('aside') && !b.parentElement.closest(MOTION_BOX));
       boxes.forEach(box => {
@@ -329,7 +340,9 @@
           else if (el.matches('.st')) run(el, [{opacity:0, scale:'1 .2', transformOrigin:'50% 100%'}, {opacity:1, scale:'1 1', transformOrigin:'50% 100%'}], 650, t);
           else if (el.matches('.fn-row')) run(el, [{opacity:0, scale:'.3 1'}, {opacity:1, scale:'1 1'}], 600, t);
           else if (el.matches('.chev-item')) run(el, [{opacity:0, translate:'-40px 0'}, {opacity:1, translate:'0 0'}], 560, t);
-          else if (el.matches('.cy-node,.cy-core,.hub-core,.vn,.vn-mid')) run(el, [{opacity:0, scale:'.6'}, {opacity:1, scale:'1'}], 600, t);
+          else if (el.matches('.cy-node,.cy-core,.hub-core,.vn,.vn-mid,.tm,.org-top,.org-node')) run(el, [{opacity:0, scale:'.6'}, {opacity:1, scale:'1'}], 600, t);
+          else if (el.matches('.mi')) run(el, [{opacity:0, translate:'0 ' + (el.matches(':nth-child(even)') ? '-30px' : '30px')}, {opacity:1, translate:'0 0'}], 600, t);
+          else if (el.matches('.ft,.ct,.ag')) run(el, [{opacity:0, translate:'-30px 0'}, {opacity:1, translate:'0 0'}], 520, t);
           else if (rich) run(el, [{opacity:0, translate:'0 40px', scale:'.96'}, {opacity:1, translate:'0 0', scale:'1'}], 700, t);
           else fadeUp(el, t);
           t += step;

@@ -462,6 +462,10 @@ def deck_motion(deck_html: str) -> tuple:
         tr = "zoom"
     elif ".slide{transform:none!important}" in deck_html:
         tr = "fade"
+    elif "clip-path:inset(0 100% 0 0);transition:clip-path" in deck_html:
+        tr = "wipe"
+    elif ".slide{transform:translateY(100%)" in deck_html:
+        tr = "cover"
     else:
         tr = "push"
     return motion, tr
@@ -473,7 +477,8 @@ def add_slide_motion(slide, motion: str = "subtle", transition: str = "push"):
     sld = slide._element
     for old in sld.findall(f"{{{P_NS}}}transition") + sld.findall(f"{{{P_NS}}}timing"):
         sld.remove(old)
-    tr_xml = {"push": '<p:push dir="u"/>', "fade": '<p:fade/>', "zoom": '<p:zoom/>'}.get(transition)
+    tr_xml = {"push": '<p:push dir="u"/>', "fade": '<p:fade/>', "zoom": '<p:zoom/>',
+              "wipe": '<p:wipe dir="r"/>', "cover": '<p:cover dir="u"/>'}.get(transition)
     anchor = sld.find(f"{{{P_NS}}}clrMapOvr")
     pos = list(sld).index(anchor) + 1 if anchor is not None else len(sld)
     if tr_xml:

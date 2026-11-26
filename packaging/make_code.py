@@ -1,4 +1,4 @@
-"""배포용 코드 묶음 만들기: packaging\\build_code 에 기계어 코드(*.pyd) + version.py + static + themes.json + 서명 파일.
+"""배포용 코드 묶음 만들기: packaging\\build_code 에 기계어 코드(*.pyd) + version.py + static + core의 데이터(json) + 서명 파일.
 원본 .py 는 넣지 않는다. build_installer.bat 과 make_release.py 가 호출."""
 import hashlib, json, os, shutil, subprocess, sys
 from pathlib import Path
@@ -35,7 +35,8 @@ def build() -> Path:
     OUT.mkdir(parents=True)
     compile_native()
     (OUT / "core").mkdir(exist_ok=True)
-    shutil.copy(ROOT / "core" / "themes.json", OUT / "core" / "themes.json")
+    for data in (ROOT / "core").glob("*.json"):     # 테마 목록·예전 테마 이름·장표 추천 가중치
+        shutil.copy(data, OUT / "core" / data.name)
     shutil.copy(ROOT / "version.py", OUT / "version.py")
     shutil.copytree(ROOT / "static", OUT / "static", ignore=shutil.ignore_patterns("__pycache__"))
     files = {p.relative_to(OUT).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()

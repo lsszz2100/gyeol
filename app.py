@@ -23,6 +23,7 @@ from datetime import datetime
 
 from config import load_config, save_config, load_history, save_history, add_project_history
 from core.template_compiler import (
+    THEME_STYLE as THEME_STYLE_MAP,
     canon_theme,
     AVAILABLE_THEMES,
     AVAILABLE_FONTS,
@@ -913,6 +914,33 @@ class KDesignHandler(BaseHTTPRequestHandler):
                                    "font": p.get("font", "theme"), "slides_html": p.get("slides_html", ""),
                                    "display": p.get("display") or {}, "updated_at": datetime.now().isoformat()})
             self._send_json(200, {"ok": True, "project": ACTIVE_PROJECT})
+            return
+
+        # 장표 추천: 어울리는 구성·꾸밈·스타일 (/api/advise, AI 없이 바로 계산)
+        if path == "/api/advise":
+            from core import slide_advisor
+            slides = slide_ops.split_slides(ACTIVE_PROJECT.get("slides_html", ""))
+            field = ((load_config().get("gen_opts") or {}).get("field") or "auto")
+            if req_data.get("all"):
+                recs = slide_advisor.recommend_deck(slides, field)
+                self._send_json(200, {"ok": True, "slides": [{"idx": i, "role_ko": r["role_ko"], "current_name": r["current_name"],
+                                                               "repeat": r["repeat"], "top": (r["layouts"] or [None])[0]}
+                                                              for i, r in enumerate(recs)]})
+                return
+            try:
+                idx = int(req_data.get("idx", 0))
+            except (TypeError, ValueError):
+                idx = 0
+            if not 0 <= idx < len(slides):
+                self._send_json(200, {"ok": False, "message": "슬라이드를 찾을 수 없습니다."})
+                return
+            rec = slide_advisor.recommend(slides[idx], idx, len(slides), field)
+            styles = {t["style"]: t.get("style_label", t["style"]) for t in AVAILABLE_THEMES}
+            cur_style = THEME_STYLE_MAP.get(ACTIVE_PROJECT.get("theme", ""), "")
+            rec["styles"] = [{"style": st, "label": styles.get(st, st),
+                              "themes": [{"id": t["id"], "name": t["name"]} for t in AVAILABLE_THEMES if t.get("style") == st][:4]}
+                             for st in rec["styles"] if st in styles and st != cur_style]
+            self._send_json(200, {"ok": True, **rec})
             return
 
         # 1-2. 슬라이드 한 장 편집 (/api/slide_op)

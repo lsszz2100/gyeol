@@ -38,6 +38,8 @@ SYSTEM_PROMPT = """[작업] 사용자가 준 주제로 1600×900 발표 슬라�
 - 제목은 결론을 말하는 문장으로 쓴다('시장 현황' 대신 '전기차 신규 등록이 두 배로 늘었다'). 발표자가 쓴 표현·용어를 그대로 존중하고 광고 문구 같은 과장은 피한다.
 - 글자 크기는 읽을 수 있게 유지한다: 본문은 크게, 한 장에 글자가 많으면 줄이거나 장을 나눈다. 작은 글씨로 억지로 욱여넣지 않는다.
 - 한 장에 강조는 하나만. 강조 색은 가장 중요한 것에만 쓴다.
+- 장표 종류에 맞는 구성을 쓴다: 목차 ㊱, 섹션 간지 ㉛, 팀·사람 ㉙, 특징·기능 ㉚, 연도별 일정 ㉝, 조직 ㉞, 후기 ㉜, 연락처 ㉟, 수치 ③④㉓㉗㉘, 순서 ⑫⑭, 비교 ⑥⑪㉕.
+- 표지·섹션 간지·마무리에는 [꾸밈] 하나를 골라 단조롭지 않게 한다. 본문 장표의 꾸밈은 덱 전체에서 2~3장까지만.
 
 [레이아웃 예시]
 ① 표지
@@ -108,6 +110,38 @@ SYSTEM_PROMPT = """[작업] 사용자가 준 주제로 1600×900 발표 슬라�
   <div class="pie" data-values="45,30,25" data-labels="국내,북미,유럽" data-unit="%" data-center="매출 구성"></div>
 ㉘ 선 그래프(시간에 따른 추이 3~8개 값)
   <div class="lc" data-values="12,19,27,38" data-labels="2023,2024,2025,2026" data-unit="억"></div>
+[장표 종류별 구성]
+㉙ 팀 소개(3~5명. 사진이 없으면 tm-ph 안을 비우고 data-i 에 이름 첫 글자. 실제 자료에 없는 사람은 만들지 말 것)
+  <div class="team"><div class="tm"><div class="tm-ph" data-i="김"></div><h4>이름</h4><div class="role">역할</div><p>한 줄 소개</p></div> …</div>
+㉚ 아이콘 특징 그리드(특징·기능·혜택 3~8개)
+  <div class="feat"><div class="ft"><div class="ft-ic"><i data-icon="아이콘 검색어"></i></div><div><h4>특징</h4><p>한 줄 설명</p></div></div> …</div>
+㉛ 섹션 구분(큰 번호 + 섹션 제목, 다른 내용 없이)
+  <div class="sect"><b>02</b><h2>섹션 제목</h2><p>이 섹션에서 다룰 내용 한 줄</p></div>
+㉜ 후기·인용 카드(2~3개. 사용자 자료에 있는 후기·인용만, 없으면 쓰지 말 것)
+  <div class="voice"><div class="vc"><p>후기 문장</p><div class="who"><i></i><div><b>이름·소속</b><br>맥락</div></div></div> …</div>
+㉝ 마일스톤 로드맵(연도·분기별 사건 4~6개, 가로선 위아래로 번갈아)
+  <div class="ms"><div class="mi"><b>2024 Q1</b><h4>사건</h4><p>설명 한 줄</p></div> …</div>
+㉞ 조직도(맨 위 1개 + 아래 2~5개 부서)
+  <div class="org"><div class="org-top"><b>대표</b><span>역할</span></div><div class="org-row"><div class="org-node"><b>부서</b><span>역할</span><ul><li>업무</li></ul></div> …</div></div>
+㉟ 연락처(2~6개, 실제 주어진 연락처만)
+  <div class="contact"><div class="ct"><i><i data-icon="mail"></i></i><div><small>EMAIL</small>주소</div></div> …</div>
+㊱ 목차(번호는 자동, 4~8개)
+  <div class="agenda"><div class="ag"><div><h4>항목</h4><p>한 줄</p></div></div> …</div>
+㊲ 육각형 벌집(요소 3~6개, 짧은 글)
+  <div class="hexes"><div class="hx"><b>01</b><h4>요소</h4><p>한 줄</p></div> …</div>
+㊳ 진행률 원 여러 개(비율 3~5개)
+  <div class="rings"><div><div class="ring" style="--p:72"><b>72%</b></div><h4>항목</h4><p>기준 시점</p></div> …</div>
+㊴ 기기 목업(앱·웹 화면 소개: section 에 class="slide mock-phone" 또는 "slide mock-laptop" 과 data-photo 를 함께)
+[꾸밈] (구성 위에 하나만 얹는다. 표지·섹션·마무리에서 효과가 크다)
+- 큰 배경 글자: 제목 뒤에 <span class="ghost">VISION</span> (짧은 영단어 하나)
+- 라벨 제목: 제목 핵심어를 <span class="tag-hl">단어</span> 로 색 블록 위에
+- 세로 제목: section 맨 앞에 <div class="vtitle">짧은 제목</div> (본문은 오른쪽에 자동 배치)
+- 블롭 도형: <i class="blob"></i> (보조 하나 더면 <i class="blob b2"></i>)
+- 테두리 제목 상자: <div class="frame-title"><h1 class="h1">제목</h1></div>
+- 색 띠: <i class="band"></i> (오른쪽은 band r, 위는 band t)
+- 원형 배지: <div class="badge"><b>80%</b><span>설명</span></div>
+- 점 격자: <i class="dots"></i>
+- 굵기 대비 제목: 제목 앞말을 <span class="thin">얇게</span> 두고 핵심어는 굵게 (예: <span class="thin">우리가 만드는</span> 새 기준)
 """
 
 RESEARCH_PROMPT = """오늘 날짜는 {today}이다. 구글 검색을 사용해 아래 주제로 발표 자료를 만들기 위한 최신 자료를 조사해라.
@@ -370,7 +404,7 @@ FIELD_RULES = {
     "edu": ("- 분야: 교육·강의 — 학습 목표 → 핵심 개념(큰 번호 목록 ㉖) → 원리·과정(순환 ⑱·화살표 프로세스 ⑭) → 예시와 비교(장단점 ㉕) → 정리·퀴즈. 한 장에 개념 하나, 쉬운 말."),
     "report": ("- 분야: 업무·성과 보고 — 요약(큰 숫자 ④·KPI ③) → 실적(세로 막대 ㉓·표 ⑪) → 잘된 점·아쉬운 점(장단점 ㉕) → 원인 분석 → 다음 계획(화살표 프로세스 ⑭) 순서. 결론과 숫자를 먼저."),
     "research": ("- 분야: 연구·분석 — 질문 → 방법 → 결과(표 ⑪·세로 막대 ㉓·원형 게이지 ⑬) → 해석(매트릭스 ⑳·벤 ㉒) → 한계 → 결론. 근거와 출처를 분명히."),
-    "company": ("- 분야: 회사·서비스 소개 — 한 줄 소개 → 문제와 비전(피라미드 ⑯) → 서비스·제품 구성(큰 번호 목록 ㉖·허브 ㉑) → 강점(3열 카드 ②) "
+    "company": ("- 분야: 회사·서비스 소개 — 한 줄 소개 → 문제와 비전(피라미드 ⑯) → 서비스·제품 구성(아이콘 그리드 ㉚·큰 번호 목록 ㉖·허브 ㉑) → 강점(3열 카드 ②) "
                 "→ 성장 연혁(계단 ⑰·타임라인 ⑫) → 주요 지표(KPI ③) → 연락처."),
     "event": ("- 분야: 행사·이벤트 기획 — 행사 개요(KPI ③) → 목적·기대 효과 → 프로그램 순서(타임라인 ⑫) → 준비 절차(화살표 프로세스 ⑭) → 역할 분담(표 ⑪) → 예산(원형 게이지 ⑬·표 ⑪)."),
 }

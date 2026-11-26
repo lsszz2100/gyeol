@@ -324,3 +324,117 @@ div.gradient-text,p.gradient-text{width:fit-content;max-width:100%}
 .lc-val{position:absolute;transform:translate(-50%,-100%);font-size:22px;font-weight:800;white-space:nowrap}
 .lc-val.hi{color:var(--accent);font-size:26px}
 .lc-lab{position:absolute;bottom:-8px;transform:translate(-50%,0);font-size:19px;color:var(--text-2);white-space:nowrap}
+/* ── 장표 종류별 구성 ㉙~㊱ ── */
+.team,.feat,.voice,.ms,.org,.contact,.agenda{--c1:var(--accent);--c2:var(--accent-2)}
+/* ㉙ 팀 소개: 원형 사진 + 이름 + 역할 */
+.team{display:grid;grid-template-columns:repeat(var(--n,4),1fr);gap:36px;margin-top:44px;text-align:center}
+.team:has(>.tm:nth-child(3):last-child){--n:3}.team:has(>.tm:nth-child(5)){--n:5}
+.tm-ph{width:180px;height:180px;margin:0 auto 18px;border-radius:50%;overflow:hidden;position:relative;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--c1) 30%,var(--surface)),color-mix(in srgb,var(--c2) 30%,var(--surface)));
+  box-shadow:0 0 0 8px color-mix(in srgb,var(--c1) 14%,transparent)}
+.tm-ph img{width:100%;height:100%;object-fit:cover}
+.tm-ph:empty::after{content:attr(data-i);position:absolute;inset:0;display:grid;place-items:center;font:800 64px/1 var(--font-display);color:color-mix(in srgb,var(--c1) 70%,var(--text-1))}
+.tm h4{font-size:26px;margin:0 0 4px}.tm .role{color:var(--c1);font-weight:700;font-size:18px;letter-spacing:.04em}
+.tm p{margin:8px 0 0;color:var(--text-2);font-size:17px}
+/* ㉚ 아이콘 특징 그리드 */
+.feat{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:34px 40px;margin-top:44px}
+.feat:has(>.ft:nth-child(4):last-child){--n:2}.feat:has(>.ft:nth-child(4):last-child).wide,.feat:has(>.ft:nth-child(8)){--n:4}
+.ft{display:grid;grid-template-columns:76px 1fr;gap:18px;align-items:start}
+.ft-ic{width:76px;height:76px;border-radius:22px;display:grid;place-items:center;font-size:34px;color:#fff;
+  background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 12px 26px color-mix(in srgb,var(--c1) 30%,transparent)}
+.ft-ic .g-ico,.ft-ic svg{width:40px;height:40px;color:#fff}
+.ft h4{font-size:24px;margin:4px 0 6px}.ft p{margin:0;color:var(--text-2);font-size:18px}
+/* ㉛ 섹션 구분: 큰 번호 + 제목 */
+.slide:has(>.sect){display:flex;flex-direction:column;justify-content:center}
+.sect{position:relative;padding-left:40px;border-left:10px solid var(--accent)}
+.sect>b{display:block;font:900 220px/0.85 var(--font-display);letter-spacing:-.04em;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sect h2{font-size:72px;margin:18px 0 8px}.sect p{color:var(--text-2);font-size:26px;margin:0}
+/* ㉜ 후기·인용 카드 */
+.voice{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:30px;margin-top:44px}
+.voice:has(>.vc:nth-child(2):last-child){--n:2}
+.vc{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:38px 34px 30px;position:relative;box-shadow:var(--shadow)}
+.vc::before{content:"“";position:absolute;top:-34px;left:26px;font:900 120px/1 Georgia,serif;color:var(--c1)}
+.vc p{font-size:21px;line-height:1.6;margin:0 0 22px}
+.vc .who{display:flex;align-items:center;gap:12px;font-size:17px;color:var(--text-2)}
+.vc .who b{color:var(--text-1);font-size:19px}
+.vc .who i{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--c1),var(--c2));flex:none}
+/* ㉝ 마일스톤 로드맵: 가로선 위아래 번갈아 */
+.ms{position:relative;display:grid;grid-template-columns:repeat(var(--n,5),1fr);margin-top:30px;height:470px}
+.ms:has(>.mi:nth-child(4):last-child){--n:4}.ms:has(>.mi:nth-child(6)){--n:6}
+.ms::before{content:"";position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;border-radius:3px;background:linear-gradient(90deg,var(--c1),var(--c2))}
+.mi{position:relative;display:flex;flex-direction:column;justify-content:flex-end;padding:0 14px 60px;text-align:center}
+.mi:nth-child(even){justify-content:flex-start;padding:60px 14px 0;transform:translateY(50%)}
+.mi:nth-child(odd){transform:translateY(-50%)}
+.mi::after{content:"";position:absolute;left:50%;width:26px;height:26px;margin-left:-13px;border-radius:50%;background:var(--surface);border:6px solid var(--c1)}
+.mi:nth-child(odd)::after{bottom:-13px}.mi:nth-child(even)::after{top:-13px}
+.mi>b{font:800 30px/1.1 var(--font-display);color:var(--c1)}.mi h4{font-size:22px;margin:6px 0 4px}.mi p{margin:0;color:var(--text-2);font-size:17px}
+/* ㉞ 조직도 */
+.org{display:flex;flex-direction:column;align-items:center;gap:56px;margin-top:40px}
+.org-top,.org-node{background:var(--surface);border:2px solid var(--border-strong);border-radius:var(--radius-sm);padding:14px 26px;text-align:center;min-width:200px}
+.org-top{background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border:0;position:relative}
+.org-top::after{content:"";position:absolute;left:50%;bottom:-56px;height:28px;border-left:3px solid var(--border-strong)}
+.org-top b,.org-node b{display:block;font-size:22px}.org-top span,.org-node span{font-size:16px;opacity:.8}
+.org-row{display:flex;gap:28px;position:relative;padding-top:28px}
+.org-row::before{content:"";position:absolute;top:0;left:calc(100px);right:calc(100px);border-top:3px solid var(--border-strong)}
+.org-node{position:relative}.org-node::before{content:"";position:absolute;left:50%;top:-31px;height:28px;border-left:3px solid var(--border-strong)}
+.org-node ul{margin:8px 0 0;padding:0;list-style:none;font-size:15px;color:var(--text-2)}
+/* ㉟ 연락처 */
+.contact{display:grid;grid-template-columns:1fr 1fr;gap:26px 50px;margin-top:44px}
+.ct{display:flex;align-items:center;gap:20px;font-size:24px}
+.ct i{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;flex:none;font-style:normal;font-size:28px;color:#fff;background:var(--c1)}
+.ct i .g-ico,.ct i svg{width:30px;height:30px;color:#fff}
+.ct small{display:block;color:var(--text-3);font-size:15px;letter-spacing:.06em}
+/* ㊱ 목차: 큰 번호 */
+.agenda{display:grid;grid-template-columns:repeat(var(--n,2),1fr);gap:8px 70px;margin-top:40px;counter-reset:ag}
+.ag{display:flex;align-items:baseline;gap:24px;padding:18px 0;border-bottom:2px solid var(--border);counter-increment:ag}
+.ag::before{content:counter(ag,decimal-leading-zero);font:900 54px/1 var(--font-display);color:var(--c1);min-width:76px}
+.ag h4{font-size:28px;margin:0}.ag p{margin:4px 0 0;color:var(--text-2);font-size:17px}
+
+/* ── 꾸밈(도형·장식): 어떤 구성에도 얹을 수 있음 ── */
+.slide:has(.ghost){isolation:isolate}
+.ghost{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:-1;white-space:nowrap;pointer-events:none;
+  font:900 300px/1 var(--font-display);letter-spacing:-.04em;text-transform:uppercase;color:color-mix(in srgb,var(--text-1) 7%,transparent)}
+.tag-hl{display:inline-block;padding:.02em .28em .08em;background:var(--accent);color:#fff;line-height:1.1}
+.tag-hl+.tag-hl{background:var(--text-1);color:var(--bg)}
+.slide:has(>.vtitle){padding-left:220px}
+.vtitle{position:absolute;left:70px;top:80px;bottom:80px;writing-mode:vertical-rl;transform:rotate(180deg);
+  font:900 76px/1 var(--font-display);letter-spacing:-.02em;color:var(--text-1);border-left:10px solid var(--accent);padding-left:18px}
+.blob{position:absolute;right:-90px;top:-80px;width:420px;height:400px;z-index:-1;pointer-events:none;opacity:.9;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));border-radius:58% 42% 63% 37%/45% 55% 45% 55%}
+.blob.b2{right:auto;left:-120px;top:auto;bottom:-140px;width:360px;height:340px;opacity:.5}
+.frame-title{display:inline-block;padding:22px 44px;border:3px solid currentColor;text-align:center}
+.frame-title :is(h1,h2,.h1,.h2){margin:0}
+.band{position:absolute;left:0;top:0;bottom:0;width:26px;background:linear-gradient(var(--accent),var(--accent-2));pointer-events:none}
+.band.r{left:auto;right:0}.band.t{right:0;bottom:auto;width:auto;height:18px}
+.badge{width:230px;height:230px;border-radius:50%;display:grid;place-content:center;text-align:center;color:#fff;
+  background:var(--accent);box-shadow:0 0 0 12px color-mix(in srgb,var(--accent) 20%,transparent),var(--shadow-lg)}
+.badge b{font:900 72px/1 var(--font-display)}.badge span{font-size:18px;opacity:.9;margin-top:6px}
+.dots{position:absolute;right:70px;bottom:60px;width:220px;height:140px;pointer-events:none;z-index:-1;
+  background:radial-gradient(color-mix(in srgb,var(--accent) 45%,transparent) 3px,transparent 3.5px) 0 0/22px 22px}
+/* ㊲ 육각형 벌집 (특징·요소 3~6개) */
+.hexes{display:flex;justify-content:center;gap:14px;margin-top:50px;--c1:var(--accent);--c2:var(--accent-2)}
+.hx{width:230px;height:265px;display:grid;place-content:center;text-align:center;padding:0 26px;color:#fff;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  background:color-mix(in srgb,var(--c1) calc(100% - var(--k,0)*24%),var(--c2))}
+.hx:nth-child(2){--k:1}.hx:nth-child(3){--k:2}.hx:nth-child(4){--k:3}.hx:nth-child(5){--k:4}.hx:nth-child(6){--k:4}
+.hx:nth-child(even){margin-top:140px}
+.hx b{font:800 34px/1 var(--font-display)}.hx h4{margin:8px 0 4px;font-size:21px;color:#fff}.hx p{margin:0;font-size:15px;opacity:.9}
+/* ㊳ 진행률 원 여러 개 (달성률·비율 3~5개) */
+.rings{display:flex;justify-content:space-around;gap:30px;margin-top:50px;text-align:center}
+.rings>div{display:flex;flex-direction:column;align-items:center;gap:16px}
+.rings .ring{width:190px;height:190px}.rings .ring b{font-size:40px}
+.rings>div:nth-child(2) .ring{background:conic-gradient(var(--accent-2) calc(var(--p)*1%),var(--surface-2) 0)}
+.rings>div:nth-child(3) .ring{background:conic-gradient(var(--accent-3,var(--accent)) calc(var(--p)*1%),var(--surface-2) 0)}
+.rings h4{margin:0;font-size:22px}.rings p{margin:0;color:var(--text-2);font-size:16px;max-width:240px}
+/* ㊴ 기기 목업: 사진을 휴대폰·노트북 화면에 */
+.slide.mock-phone .g-photo{top:70px;bottom:70px;right:120px;width:380px;border:14px solid #111;border-radius:48px;box-shadow:var(--shadow-lg)}
+.slide.mock-phone .g-photo::before{content:"";position:absolute;top:10px;left:50%;width:90px;height:22px;margin-left:-45px;border-radius:12px;background:#111;z-index:2}
+.slide.mock-phone.with-photo{padding-right:600px}
+.slide.mock-laptop .g-photo{top:150px;bottom:auto;right:70px;width:700px;height:440px;border:16px solid #1b1b1f;border-bottom-width:22px;border-radius:18px 18px 0 0;box-shadow:var(--shadow-lg);overflow:visible}
+.slide.mock-laptop .g-photo img{border-radius:2px}
+.slide.mock-laptop .g-photo::after{content:"";position:absolute;left:-70px;right:-70px;bottom:-44px;height:22px;border-radius:0 0 18px 18px;background:linear-gradient(#c9cbd1,#9a9ca3)}
+.slide.mock-laptop.with-photo{padding-right:840px}
+/* 굵기 대비 제목: 얇은 말 + 굵은 말 */
+.thin{font-weight:200!important;letter-spacing:-.01em}
+.h1 .thin,.h2 .thin{font-family:var(--font-sans)}

@@ -1,0 +1,146 @@
+{
+ "note": "장표 종류별 어울리는 구성·꾸밈 가중치",
+ "role_prior": {
+  "stats": {
+   "kpi": 2.6,
+   "vbars": 2.3,
+   "rings": 2.0,
+   "pie": 1.8,
+   "bignum": 1.8,
+   "line": 1.4,
+   "ring": 1.2,
+   "table": 0.8
+  },
+  "process": {
+   "timeline": 2.6,
+   "chev": 2.6,
+   "hex": 1.2,
+   "cycle": 1.0,
+   "numlist": 0.9
+  },
+  "team": {
+   "team": 4.0,
+   "org": 1.8
+  },
+  "about": {
+   "split": 2.4,
+   "photo": 2.0,
+   "bignum": 1.0,
+   "icons": 1.0
+  },
+  "mockup": {
+   "mockup": 3.5,
+   "photo": 1.5
+  },
+  "portfolio": {
+   "photo": 2.8,
+   "icons": 1.2
+  },
+  "service": {
+   "icons": 3.0,
+   "hex": 1.6,
+   "numlist": 1.3,
+   "hub": 1.0
+  },
+  "timeline": {
+   "milestone": 3.0,
+   "timeline": 2.6,
+   "stair": 1.3
+  },
+  "pricing": {
+   "pricing": 4.0,
+   "table": 1.2
+  },
+  "agenda": {
+   "agenda": 4.0,
+   "numlist": 1.4
+  },
+  "section": {
+   "section": 4.0
+  },
+  "mission": {
+   "pyramid": 2.2,
+   "icons": 1.6,
+   "hub": 1.6,
+   "split": 1.2
+  },
+  "contact": {
+   "contact": 4.0
+  },
+  "market": {
+   "funnel": 2.4,
+   "pie": 2.0,
+   "matrix": 1.5,
+   "venn": 1.2,
+   "rings": 1.0
+  },
+  "compare": {
+   "versus": 3.0,
+   "procon": 2.4,
+   "table": 2.0,
+   "vbars": 1.0
+  },
+  "other": {
+   "split": 1.5,
+   "numlist": 1.2,
+   "icons": 1.1,
+   "photo": 1.0
+  },
+  "cover": {},
+  "thanks": {
+   "contact": 1.5,
+   "section": 1.2
+  }
+ },
+ "role_decor": {
+  "cover": [
+   "thin",
+   "ghost",
+   "tag",
+   "vtitle",
+   "frame",
+   "blob"
+  ],
+  "section": [
+   "ghost",
+   "band",
+   "thin"
+  ],
+  "stats": [
+   "badge",
+   "thin",
+   "dots"
+  ],
+  "about": [
+   "band",
+   "dots",
+   "thin"
+  ],
+  "team": [
+   "blob",
+   "dots"
+  ],
+  "service": [
+   "dots",
+   "blob"
+  ],
+  "mission": [
+   "thin",
+   "band"
+  ],
+  "thanks": [
+   "ghost",
+   "frame",
+   "thin"
+  ],
+  "quote": [
+   "band",
+   "dots"
+  ],
+  "other": [
+   "dots",
+   "band",
+   "thin"
+  ]
+ }
+}

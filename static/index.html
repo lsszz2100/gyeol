@@ -222,6 +222,24 @@
     .notes-pane h5 small { font-weight: 500; color: var(--ink-3); margin-left: 6px; }
     .ai-pop { position: absolute; left: 50%; transform: translateX(-50%); bottom: 100%; width: min(620px, calc(100% - 56px)); background: #fff; border: 1px solid var(--line-2); border-radius: 14px; box-shadow: 0 20px 50px rgba(20,16,40,.18); padding: 14px 16px; display: none; z-index: 45; flex-direction: column; gap: 10px; }
     .ai-pop.open { display: flex; }
+    .adv-pop { position: absolute; left: 50%; transform: translateX(-50%); bottom: 100%; width: min(680px, calc(100% - 40px)); max-height: 70vh; overflow: auto; background: #fff; border: 1px solid var(--line-2); border-radius: 14px; box-shadow: 0 20px 50px rgba(20,16,40,.18); padding: 14px 16px; display: none; z-index: 46; }
+    .adv-pop.open { display: block; }
+    .adv-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .adv-head .spacer { flex: 1; }
+    .adv-sec { font-size: 12px; font-weight: 700; color: var(--ink-2); margin: 12px 0 6px; }
+    .adv-meta { font-size: 12.5px; color: var(--ink-2); }
+    .adv-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .adv-card { border: 1px solid var(--line-2); border-radius: 10px; padding: 9px 11px; display: flex; flex-direction: column; gap: 4px; }
+    .adv-card b { font-size: 13.5px; }
+    .adv-card small { color: var(--ink-2); font-size: 12px; line-height: 1.45; flex: 1; }
+    .adv-card button { align-self: flex-start; margin-top: 4px; padding: 4px 10px; font-size: 12px; }
+    .adv-card.first { border-color: #b9a3ee; background: var(--brand-soft); }
+    .adv-styles { display: flex; flex-wrap: wrap; gap: 6px; }
+    .adv-styles button { font-size: 12px; padding: 4px 10px; }
+    .adv-list { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; }
+    .adv-list div { display: flex; gap: 8px; align-items: center; padding: 5px 6px; border-radius: 8px; cursor: pointer; }
+    .adv-list div:hover { background: var(--brand-soft); }
+    .adv-list .rep { color: #c2410c; font-weight: 700; }
     .ai-pop .seg button { padding: 6px 12px; }
     .ai-pop textarea { border: 1px solid var(--line-2); border-radius: 9px; padding: 9px 11px; min-height: 64px; resize: vertical; font-size: 13.5px; line-height: 1.5; }
     .ai-pop textarea:focus { outline: none; border-color: #b9a3ee; box-shadow: 0 0 0 3px var(--brand-soft); }
@@ -345,6 +363,13 @@
         <span class="tb-sep"></span>
         <button class="btn" id="btn-edit" title="이 슬라이드의 글자를 직접 고치기 (E)">✏️ 편집</button>
         <button class="btn" id="btn-ai-slide" title="이 슬라이드만 AI로 고치거나 다시 만들기">✨ AI로 고치기</button>
+        <button class="btn" id="btn-advise" title="이 슬라이드에 어울리는 도식·도형·꾸밈·스타일을 추천합니다">💡 장표 추천</button>
+        <div class="adv-pop" id="adv-pop">
+          <div class="adv-head"><b id="adv-title">장표 추천</b><span class="spacer"></span>
+            <button class="btn" id="btn-adv-all" style="padding:4px 10px;font-size:12px">전체 장표 점검</button>
+            <button class="icon-btn" id="btn-adv-close">✕</button></div>
+          <div id="adv-body"></div>
+        </div>
         <button class="btn" id="btn-review" title="모든 슬라이드를 화면으로 확인해 글자 넘침·겹침을 AI가 찾아서 고쳐 줍니다">🔍 AI 검수</button>
         <div class="menu-wrap">
           <button class="btn" id="btn-insert" title="사진·그림·아이콘·도형 넣기">🖼 넣기 ▾</button>
@@ -495,7 +520,7 @@
       <label class="tg"><input type="checkbox" data-d="cover_number"> 표지에도 번호 표시</label>
       <label class="tg"><input type="checkbox" data-d="progress"> 아래쪽 진행 막대 표시</label>
       <div class="row2"><span>전환 효과</span>
-        <select data-d="transition"><option value="slide">밀어내기</option><option value="fade">페이드</option><option value="zoom">확대 (다가오기)</option><option value="none">없음</option></select></div>
+        <select data-d="transition"><option value="slide">밀어내기</option><option value="fade">페이드</option><option value="zoom">확대 (다가오기)</option><option value="push">크게 밀어내기</option><option value="wipe">닦아내기</option><option value="cover">아래에서 덮기</option><option value="none">없음</option></select></div>
       <div class="row2"><span>애니메이션 <small style="color:#6b7280">(발표·영상에서 제목→내용 순서로 등장)</small></span>
         <select data-d="motion"><option value="subtle">은은하게</option><option value="rich">화려하게</option><option value="none">없음</option></select></div>
       <div class="row2"><span>바닥글 문구 (모든 슬라이드)</span>

@@ -66,6 +66,15 @@ def display_css_html(theme_id: str, display: dict):
     elif d["transition"] == "zoom":   # 확대(플라이스루): 다음 장이 앞으로 다가오며 나타남
         css.append(".slide{transform:scale(1.08)}.slide.is-active{transform:scale(1)}.slide.is-prev{transform:scale(.92)}"
                    ".slide{transition:opacity .6s var(--ease),transform .6s var(--ease)}")
+    elif d["transition"] == "wipe":   # 닦아내기: 다음 장이 왼쪽부터 드러남
+        css.append(".slide{transform:none;clip-path:inset(0 100% 0 0);transition:clip-path .7s var(--ease),opacity .01s}"
+                   ".slide.is-active{clip-path:inset(0 0 0 0)}.slide.is-prev{clip-path:inset(0 0 0 0);opacity:1;z-index:1}")
+    elif d["transition"] == "cover":  # 덮기: 다음 장이 아래에서 올라와 덮음
+        css.append(".slide{transform:translateY(100%);transition:transform .7s var(--ease),opacity .01s}"
+                   ".slide.is-active{transform:none}.slide.is-prev{transform:none;opacity:1;z-index:1}")
+    elif d["transition"] == "push":   # 밀어내기(크게): 앞 장을 옆으로 밀어냄
+        css.append(".slide{transform:translateX(100%);opacity:1;transition:transform .7s var(--ease)}"
+                   ".slide.is-active{transform:none}.slide.is-prev{transform:translateX(-100%)}")
     css.append(":root{--gyeol-motion:%s}" % ({"none": "none", "rich": "rich"}.get(d.get("motion"), "subtle")))
     css.append(".g-footer{position:absolute;left:0;right:0;bottom:22px;text-align:center;font-size:14px;letter-spacing:.06em;color:var(--text-3);z-index:3;pointer-events:none}")
     pos = {"tl": "top:30px;left:40px", "tr": "top:30px;right:40px", "bl": "bottom:30px;left:40px", "br": "bottom:30px;right:40px"}

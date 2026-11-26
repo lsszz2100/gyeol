@@ -32,6 +32,8 @@ echo [*] Building Gyeol.exe...
     --icon="static\img\app.ico" ^
     --add-data="%~dp0static;static" ^
     --add-data="%~dp0core\themes.json;core" ^
+    --add-data="%~dp0core\theme_legacy.json;core" ^
+    --add-data="%~dp0core\advisor_data.json;core" ^
     "%~dp0app.py"
 
 echo.

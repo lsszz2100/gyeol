@@ -1432,6 +1432,69 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // 장표 추천: 이 슬라이드에 어울리는 구성·꾸밈·스타일 (계산은 서버에서 바로, 적용은 AI 고치기로)
+  function advClose() { $("adv-pop").classList.remove("open"); $("btn-advise").classList.remove("on"); }
+  async function advShow() {
+    if (editing) finishEdit(true);
+    $("ai-pop").classList.remove("open");
+    $("adv-pop").classList.add("open"); $("btn-advise").classList.add("on");
+    $("adv-title").textContent = `${state.idx + 1}번 장표 추천`;
+    $("adv-body").innerHTML = '<div class="adv-meta">내용을 살펴보는 중…</div>';
+    let r;
+    try { r = await api("/api/advise", { idx: state.idx }); } catch (e) { r = { ok: false, message: "서버와 통신하지 못했습니다." }; }
+    if (!r.ok) { $("adv-body").innerHTML = `<div class="adv-meta">${esc(r.message || "추천하지 못했습니다.")}</div>`; return; }
+    const cur = r.current_name ? ` · 지금 구성: <b>${esc(r.current_name)}</b>` : "";
+    let h = `<div class="adv-meta">이 장표는 <b>${esc(r.role_ko)}</b> 장표로 보입니다${cur}</div>`;
+    h += '<div class="adv-sec">어울리는 도식·구성</div><div class="adv-cards">';
+    if (!r.layouts.length) h += '<div class="adv-meta" style="grid-column:1/-1">표지·간지·마무리 장표는 도식보다 아래 꾸밈으로 분위기를 살리는 편이 좋습니다.</div>';
+    h += r.layouts.map((l, i) => `<div class="adv-card${i === 0 ? " first" : ""}"><b>${i === 0 ? "추천 · " : ""}${esc(l.name)}</b><small>${esc(l.why)}</small>`
+      + `<button class="btn" data-ins="${esc(l.instruction)}" data-name="${esc(l.name)}">이 구성으로 바꾸기</button></div>`).join("");
+    h += '</div><div class="adv-sec">어울리는 도형·꾸밈</div><div class="adv-cards">';
+    h += r.decor.map((d) => `<div class="adv-card"><b>${esc(d.name)}</b><small>${esc(d.why)}</small>`
+      + `<button class="btn" data-ins="${esc(d.instruction + " 다른 내용과 구성은 그대로 두세요.")}" data-name="${esc(d.name)}">얹기</button></div>`).join("");
+    h += "</div>";
+    if ((r.styles || []).length) {
+      h += '<div class="adv-sec">어울리는 디자인 스타일 (덱 전체에 적용)</div><div class="adv-styles">';
+      h += r.styles.map((st) => st.themes.map((t) => `<button class="btn" data-theme="${esc(t.id)}">${esc(st.label)} · ${esc(t.name)}</button>`).slice(0, 2).join("")).join("");
+      h += "</div>";
+    }
+    $("adv-body").innerHTML = h;
+  }
+  async function advApply(instruction, name) {
+    advClose();
+    const idx = state.idx;
+    $("busy-text").textContent = `${idx + 1}번 슬라이드를 '${name}'(으)로 바꾸는 중`;
+    $("busy-sub").textContent = "내용은 그대로 두고 구성만 바꿉니다. 보통 10~20초 걸립니다.";
+    $("busy").classList.add("on");
+    try { await slideOp("ai_edit", { idx, instruction: instruction + " 글의 내용·수치·대본은 바꾸지 마세요.", research: false, history: [] }, `'${name}' 구성으로 바꿨습니다.`); }
+    finally { $("busy").classList.remove("on"); }
+  }
+  async function advAll() {
+    $("adv-title").textContent = "전체 장표 점검";
+    $("adv-body").innerHTML = '<div class="adv-meta">모든 장표를 살펴보는 중…</div>';
+    const r = await api("/api/advise", { all: true });
+    if (!r.ok) { $("adv-body").innerHTML = `<div class="adv-meta">${esc(r.message || "점검하지 못했습니다.")}</div>`; return; }
+    const reps = r.slides.filter((x) => x.repeat).length;
+    let h = `<div class="adv-meta">장표를 누르면 그 장으로 가서 자세한 추천을 봅니다.${reps ? ` <span class="rep">같은 구성이 연달아 나오는 곳 ${reps}곳</span>` : ""}</div><div class="adv-list">`;
+    h += r.slides.map((x) => `<div data-go="${x.idx}"><b>${x.idx + 1}</b><span>${esc(x.role_ko)}</span>`
+      + `<span style="color:var(--ink-2)">${x.current_name ? esc(x.current_name) : "일반 구성"}</span>${x.repeat ? '<span class="rep">반복</span>' : ""}`
+      + `<span class="spacer" style="flex:1"></span>${x.top ? `→ ${esc(x.top.name)}` : ""}</div>`).join("");
+    $("adv-body").innerHTML = h + "</div>";
+  }
+  $("btn-advise").onclick = (e) => { e.stopPropagation(); $("adv-pop").classList.contains("open") ? advClose() : advShow(); };
+  $("btn-adv-close").onclick = advClose;
+  $("btn-adv-all").onclick = advAll;
+  $("adv-pop").addEventListener("click", (e) => {
+    e.stopPropagation();
+    const b = e.target.closest("button[data-ins]");
+    if (b) return advApply(b.dataset.ins, b.dataset.name);
+    const t = e.target.closest("button[data-theme]");
+    if (t) return updateStyle({ theme: t.dataset.theme });
+    const g = e.target.closest("[data-go]");
+    if (g) { goTo(+g.dataset.go); advShow(); }
+  });
+  document.addEventListener("click", advClose);
+
   // AI 검수: 모든 슬라이드를 화면으로 찍어 문제를 찾고 AI가 고친다 (끝날 때까지 상태를 확인)
   let reviewTimer = null;
   $("btn-review").onclick = async () => {

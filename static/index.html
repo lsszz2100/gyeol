@@ -172,6 +172,13 @@
     /* 생성 옵션 팝오버 */
     .opts-pop { position: absolute; left: 0; right: 0; bottom: calc(100% + 10px); background: #fff; border: 1px solid var(--line-2); border-radius: 14px; box-shadow: 0 20px 50px rgba(20,16,40,.18); padding: 16px 18px; display: none; z-index: 40; max-height: 62vh; overflow-y: auto; }
     .opts-pop.open { display: block; }
+    .guide-pop textarea { width: 100%; min-height: 220px; border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 13.5px; line-height: 1.6; resize: vertical; box-sizing: border-box; }
+    .guide-pop .gp-row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-3, #64748b); }
+    #btn-guide.on { background: #eef2ff; border-color: #6366f1; color: #3730a3; font-weight: 700; }
+    .guide-res { position: fixed; right: 20px; bottom: 20px; width: min(440px, calc(100vw - 40px)); max-height: 60vh; overflow-y: auto; background: #fff; border: 1px solid var(--line-2); border-radius: 14px; box-shadow: 0 20px 50px rgba(20,16,40,.22); padding: 14px 16px; z-index: 60; display: none; font-size: 13px; line-height: 1.65; }
+    .guide-res.open { display: block; }
+    .guide-res .gr-item { display: flex; gap: 6px; align-items: baseline; }
+    .guide-res .gr-sec { margin: 8px 0 2px; font-weight: 700; font-size: 12.5px; color: #475569; }
     .dock { position: relative; }
     .opts-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
     .opts-head b { font-size: 14px; }
@@ -414,6 +421,7 @@
         <div class="dock-row">
           <input type="file" id="src-file" multiple hidden accept=".pdf,.docx,.pptx,.hwpx,.xlsx,.txt,.md,.csv,.tsv,.hwp,.doc,.ppt,.xls,.png,.jpg,.jpeg,.webp">
           <button class="btn" id="btn-src" title="가지고 있는 문서로 발표 자료 만들기 (PDF, Word, 파워포인트, 한글, 엑셀, 텍스트, 스캔·사진)">📎 내 자료</button>
+          <button class="btn" id="btn-guide" title="제안요청서·과제 안내·발표 지침 같은 가이드를 넣으면 요구 사항을 분석해 그대로 맞춘 PPT를 만듭니다">📋 가이드</button>
           <textarea id="prompt-input" class="prompt" rows="1" placeholder="어떤 발표 자료를 만들까요? 예) 2026년 대한민국 고용 동향 보고서"></textarea>
           <button class="gen-btn" id="btn-generate">✨ 슬라이드 만들기</button>
         </div>
@@ -426,6 +434,19 @@
           <span class="opts-summary" id="opts-summary"></span>
           <button class="btn" id="btn-opts" style="padding:5px 10px">⚙ 생성 옵션</button>
         </div>
+        <div class="opts-pop guide-pop" id="guide-pop">
+          <div class="opts-head"><b>📋 가이드 맞춤 PPT</b><button class="icon-btn" id="btn-guide-close">✕</button></div>
+          <div style="font-size:12.5px;color:#64748b;margin-bottom:8px">발주처의 <b>제안요청서(RFP)</b>, 교수님의 <b>과제 안내</b>, 행사 측의 <b>발표 지침</b>, 업체 <b>요청서</b>를 붙여 넣으세요.
+            AI가 장수·목차 순서·항목별 꼭 넣을 내용·배점·키워드·그대로 넣을 문구·금지어·표지 정보를 뽑아 그대로 맞춰 만들고, 다 만든 뒤 지켰는지 확인해 드립니다. (주제 칸은 비워도 됩니다)</div>
+          <textarea id="guide-text" placeholder="예) 발표 10분, 15장 이내&#10;1. 사업 개요 2. 추진 배경 3. 추진 전략(배점 30) 4. 추진 일정 5. 예산 6. 기대 효과&#10;필수 키워드: 디지털 전환, ESG&#10;표지에 기관명 ○○시청 표기"></textarea>
+          <div class="gp-row">
+            <input type="file" id="guide-file" hidden accept=".pdf,.docx,.pptx,.hwpx,.xlsx,.txt,.md,.hwp,.doc,.png,.jpg,.jpeg,.webp">
+            <button class="btn" id="btn-guide-file" style="padding:5px 10px">📂 가이드 파일 불러오기</button>
+            <button class="btn" id="btn-guide-clear" style="padding:5px 10px">지우기</button>
+            <span id="guide-count"></span>
+          </div>
+        </div>
+        <div class="guide-res" id="guide-res"></div>
         <div class="opts-pop" id="opts-pop">
           <div class="opts-head"><b>생성 옵션</b><button class="icon-btn" id="btn-opts-close">✕</button></div>
           <div class="opts-grid">

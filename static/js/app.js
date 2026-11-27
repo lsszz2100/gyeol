@@ -641,10 +641,68 @@ document.addEventListener("DOMContentLoaded", () => {
   dock.addEventListener("dragover", (e) => e.preventDefault());
   dock.addEventListener("drop", (e) => { e.preventDefault(); if (e.dataTransfer.files.length) addSources([...e.dataTransfer.files]); });
 
+  // ───────────────── 가이드 맞춤 ─────────────────
+  const guidePop = $("guide-pop");
+  function guideText() { return $("guide-text").value.trim(); }
+  function guideSync() {
+    const n = guideText().length;
+    $("btn-guide").classList.toggle("on", n > 0);
+    $("btn-guide").textContent = n ? "📋 가이드 ✓" : "📋 가이드";
+    $("guide-count").textContent = n ? `${n.toLocaleString()}자` + (n > 20000 ? " (앞 20,000자만 사용)" : "") : "";
+  }
+  $("btn-guide").onclick = (e) => { e.stopPropagation(); $("opts-pop").classList.remove("open"); guidePop.classList.toggle("open"); if (guidePop.classList.contains("open")) $("guide-text").focus(); };
+  $("btn-guide-close").onclick = () => guidePop.classList.remove("open");
+  $("guide-text").oninput = guideSync;
+  $("btn-guide-clear").onclick = () => { $("guide-text").value = ""; guideSync(); };
+  $("btn-guide-file").onclick = () => $("guide-file").click();
+  $("guide-file").onchange = async (e) => {
+    const f = e.target.files[0]; e.target.value = "";
+    if (!f) return;
+    if (f.size > 20 * 1024 * 1024) { toast("20MB 이하 파일만 넣을 수 있습니다.", true); return; }
+    const data = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(",")[1] || ""); r.onerror = no; r.readAsDataURL(f); });
+    $("btn-guide-file").disabled = true;
+    try {
+      const res = await api("/api/read_source", { name: f.name, data });
+      if (!res.ok) { toast(`${f.name}: ${res.message}`, true); return; }
+      const cur = guideText();
+      $("guide-text").value = (cur ? cur + "\n\n" : "") + (res.text || "");
+      guideSync();
+      toast(`${f.name} 내용을 가이드에 넣었습니다.`);
+    } catch (err) { toast("파일을 읽지 못했습니다.", true); }
+    finally { $("btn-guide-file").disabled = false; }
+  };
+  document.addEventListener("click", (e) => {
+    if (!guidePop.contains(e.target) && e.target !== $("btn-guide")) guidePop.classList.remove("open");
+    if (!$("guide-res").contains(e.target)) $("guide-res").classList.remove("open");
+  });
+  function showGuideResult(res) {
+    const box = $("guide-res");
+    if (!res.guide_found) {
+      box.innerHTML = `<b>📋 가이드</b><div style="margin-top:6px">가이드에서 발표 자료 요구 사항(장수·목차·키워드 등)을 찾지 못해, 가이드 내용을 참고 자료로 써서 만들었습니다.</div>`;
+      box.classList.add("open"); return;
+    }
+    const cs = res.guide_checks || [];
+    const icon = (ok) => ok === true ? "✅" : ok === false ? "⚠️" : "👀";
+    const groups = [["count", "분량"], ["section", "구성 (가이드 순서)"], ["keyword", "키워드"], ["phrase", "그대로 넣을 문구"],
+      ["forbidden", "금지어"], ["include", "꼭 넣을 자료 — 직접 확인"], ["other", "그 밖의 지침 — 직접 확인"]];
+    const bad = cs.filter((c) => c.ok === false).length;
+    let html = `<div style="display:flex;justify-content:space-between;align-items:center"><b>📋 가이드 반영 확인</b><button class="icon-btn" onclick="this.closest('.guide-res').classList.remove('open')">✕</button></div>`
+      + `<div style="margin:4px 0 6px;color:${bad ? "#b45309" : "#15803d"}">${bad ? `⚠️ ${bad}개 항목이 덜 반영됐습니다. 해당 장에서 ✨ AI 수정으로 보완해 주세요.` : "✅ 확인할 수 있는 요구 사항은 모두 반영됐습니다."}</div>`;
+    for (const [k, name] of groups) {
+      const items = cs.filter((c) => c.kind === k);
+      if (!items.length) continue;
+      html += `<div class="gr-sec">${name}</div>` + items.map((c) => `<div class="gr-item"><span>${icon(c.ok)}</span><span>${esc(c.item.replace(/^[^:]+:\s*/, ""))}</span></div>`).join("");
+    }
+    box.innerHTML = html;
+    box.classList.add("open");
+  }
+
   async function generate() {
     const prompt = $("prompt-input").value.trim();
     const hasSrc = sourceFiles.length > 0;
-    if (!prompt && !hasSrc) { toast("만들고 싶은 발표 주제를 입력하거나 내 자료를 넣어 주세요.", true); $("prompt-input").focus(); return; }
+    const guide = guideText();
+    if (!prompt && !hasSrc && !guide) { toast("만들고 싶은 발표 주제를 입력하거나 내 자료·가이드를 넣어 주세요.", true); $("prompt-input").focus(); return; }
+    guidePop.classList.remove("open");
     const research = hasSrc ? sourceResearch : !!state.opts.research;
     $("opts-pop").classList.remove("open");
 
@@ -657,7 +715,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const t0 = Date.now();
     const timer = setInterval(() => {
       const sec = Math.round((Date.now() - t0) / 1000);
-      $("loading-time").textContent = `${sec}초 경과 · 보통 30초~1분 걸립니다`;
+      $("loading-time").textContent = `${sec}초 경과 · ${guide ? "가이드 분석·확인까지 보통 1~3분" : "보통 30초~1분"} 걸립니다`;
       if (research && sec === 15) { setStep("step-research", "done"); setStep("step-write", "run"); }
     }, 1000);
 
@@ -668,6 +726,7 @@ document.addEventListener("DOMContentLoaded", () => {
         font: $("font-select").value || "theme",
         opts: { ...state.opts, research },
         material: sourceFiles.map((f) => ({ name: f.name, text: f.text })),
+        guide,
       });
       if (!res.ok) { toast(res.message || "생성에 실패했습니다.", true); return; }
       setStep("step-research", "done"); setStep("step-write", "done"); setStep("step-design", "done");
@@ -678,6 +737,7 @@ document.addEventListener("DOMContentLoaded", () => {
       toast(`${res.message}${extra}${ph}`);
       if (res.research_failed) setTimeout(() => toast(res.research_note || "최신 자료 검색을 쓸 수 없어(네트워크 확인) AI가 알고 있는 내용으로 만들었습니다. 수치는 직접 확인해 주세요.", true), 1800);
       if (res.photos_pending) watchPhotos(res.project.id);
+      if (guide) showGuideResult(res);
     } catch (e) {
       toast("서버와 통신하지 못했습니다. 프로그램을 다시 실행해 주세요.", true);
     } finally {

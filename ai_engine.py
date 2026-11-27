@@ -511,7 +511,8 @@ def _visual_rules(visuals: str, single: bool = False, level: str = "normal") -> 
     return rules
 
 
-def _compose_prompt(topic: str, slide_count: int, research: str, opts: dict = None, material: str = "") -> str:
+def _compose_prompt(topic: str, slide_count: int, research: str, opts: dict = None, material: str = "",
+                    guide: str = "") -> str:
     o = {k: _opt(opts, k) for k in DEFAULT_OPTS}
     rules = _style_rules(o)
     rules.append(ELEMENT_RULES[_elements_level(o)])
@@ -542,6 +543,7 @@ def _compose_prompt(topic: str, slide_count: int, research: str, opts: dict = No
 [슬라이드 장수] 정확히 {slide_count}장 (<section> 블록 {slide_count}개). 1장은 ① 표지, 마지막 장은 {last}.
 중간 장들은 ②~⑨ 레이아웃을 주제에 맞게 골고루 사용. 목차·참고 자료·감사 인사 슬라이드는 프로그램이 자동으로 붙이므로 만들지 말 것.
 
+{guide}
 [작성 조건]
 {chr(10).join(rules)}
 {extra}
@@ -739,6 +741,7 @@ def generate_presentation_slides(
     defer_photos: bool = False,
     material: str = "",
     material_names: list = None,
+    guide: str = "",
 ) -> dict:
     """
     슬라이드를 생성합니다.
@@ -772,7 +775,7 @@ def generate_presentation_slides(
                 research_failed = True
                 logger.warning(f"자료 조사 실패, 조사 없이 진행: {e}")
         try:
-            raw = cli_llm.complete(provider, _compose_prompt(prompt, slide_count, research, opts, material))
+            raw = cli_llm.complete(provider, _compose_prompt(prompt, slide_count, research, opts, material, guide))
         except cli_llm.CliError as e:
             raise AIGenerationError(str(e))
         used_model = cli_llm.PROVIDERS[provider]["label"]
@@ -790,7 +793,7 @@ def generate_presentation_slides(
         if _opt(opts, "visuals") == "photos":
             from core import media
             prefetch = media.PhotoPrefetch(PHOTO_MAX[_photo_level(opts)])
-        out = _gemini_with_fallback(api_key, target, _compose_prompt(prompt, slide_count, research, opts, material),
+        out = _gemini_with_fallback(api_key, target, _compose_prompt(prompt, slide_count, research, opts, material, guide),
                                     on_text=prefetch.feed if prefetch else None)
         used_model = out["model"]
         if out.get("finish") == "MAX_TOKENS":
@@ -798,7 +801,7 @@ def generate_presentation_slides(
         raw = out["text"]
     elif provider == "openai":
         used_model = model or "gpt-4o"
-        raw = _generate_with_openai(api_key, _compose_prompt(prompt, slide_count, "", opts, material), used_model)
+        raw = _generate_with_openai(api_key, _compose_prompt(prompt, slide_count, "", opts, material, guide), used_model)
     else:
         raise AIGenerationError(f"알 수 없는 AI 공급자: {provider}")
 

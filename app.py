@@ -31,7 +31,8 @@ from core.template_compiler import (
     compile_slide_deck,
 )
 from core.korean_presets import get_all_presets, get_preset_by_id
-from ai_engine import resolve_opts, mood_styles, generate_presentation_slides, rewrite_slide, to_english, AIGenerationError, DEFAULT_OPTS, ocr_images, summarize_chunk
+from ai_engine import resolve_opts, mood_styles, generate_presentation_slides, rewrite_slide, to_english, AIGenerationError, DEFAULT_OPTS, ocr_images, summarize_chunk, _call_llm
+from core import guide as guide_mod
 import desktop
 import config as config_mod
 from core import cli_llm
@@ -845,6 +846,11 @@ class KDesignHandler(BaseHTTPRequestHandler):
             if not material_names:   # 자료 첨부 때의 조사 끔은 이번 생성에만 적용
                 cfg["gen_opts"] = opts  # 다음 실행 때 같은 옵션으로 시작
                 save_config(cfg)
+            guide_text = str(req_data.get("guide") or "").strip()[:guide_mod.MAX_GUIDE]
+            if guide_text and provider == "fallback":
+                self._send_json(200, {"ok": False, "message": "가이드 맞춤은 AI가 필요합니다. ⚙️ 설정에서 AI 엔진을 골라 주세요."})
+                return
+            guide_req, guide_checks = None, []
             logger.info(f"AI 슬라이드 생성 시작 - 주제: {prompt[:40]} (제공자: {provider})")
             # 토큰: 서버의 서명된 승인이 있어야 생성한다. 실패하면 돌려준다
             rid, done = "", False
@@ -856,12 +862,49 @@ class KDesignHandler(BaseHTTPRequestHandler):
                     return
             try:
                 with BUSY:
-                    result = generate_presentation_slides(
-                        prompt=prompt, provider=provider, api_key=api_key, model=model, preset_id=preset_id,
-                        slide_count=int(opts.get("slide_count") or 10),
-                        use_research=bool(opts.get("research", True)),
-                        opts=resolve_opts(opts, theme), defer_photos=True, material=material, material_names=material_names,
-                    )
+                    gblock = ""
+                    if guide_text:   # 가이드 맞춤: 요구 사항 뽑기 → 작성 조건 맨 위에 → 다 만든 뒤 검사
+                        guide_req = guide_mod.analyze(guide_text, lambda t: _call_llm(provider, api_key, model, t)[0])
+                        if guide_req["found"]:
+                            opts = guide_mod.apply_opts(guide_req, opts)
+                            gblock = guide_mod.prompt_block(guide_req)
+                            if not prompt:
+                                prompt = guide_req["title"] or "가이드에 맞춘 발표 자료"
+                                if title in ("", "새 프레젠테이션"):
+                                    title = prompt[:40]
+                            logger.info(f"가이드 분석: 구성 {len(guide_req['sections'])}항목, 키워드 {len(guide_req['keywords'])}개, "
+                                        f"문구 {len(guide_req['phrases'])}개, 본문 {opts.get('slide_count')}장")
+                        else:        # 요구 사항이 없는 글이면 자료로 쓴다
+                            material = (material + "\n\n" if material else "") + "[가이드]\n" + guide_text
+                            material_names = (material_names or []) + ["가이드"]
+
+                    def _gen(gb: str):
+                        return generate_presentation_slides(
+                            prompt=prompt, provider=provider, api_key=api_key, model=model, preset_id=preset_id,
+                            slide_count=int(opts.get("slide_count") or 10),
+                            use_research=bool(opts.get("research", True)),
+                            opts=resolve_opts(opts, theme), defer_photos=True, material=material, material_names=material_names,
+                            guide=gb,
+                        )
+                    result = _gen(gblock)
+                    if gblock:
+                        guide_checks = guide_mod.check(result["html"], guide_req)
+                        fix = guide_mod.fix_block(guide_checks)
+                        if fix:      # 빠진 항목·키워드·문구가 있으면 한 번 더 써서 나은 쪽을 쓴다
+                            logger.info("가이드 요구 중 빠진 것이 있어 한 번 더 작성합니다")
+                            try:
+                                r2 = _gen(gblock + fix)
+                                c2 = guide_mod.check(r2["html"], guide_req)
+                                miss = lambda cs: sum(1 for c in cs if c["ok"] is False)
+                                if miss(c2) < miss(guide_checks):
+                                    for fut in (result.get("photo_jobs") or {}).values():
+                                        try:
+                                            fut.cancel()
+                                        except Exception:
+                                            pass
+                                    result, guide_checks = r2, c2
+                            except AIGenerationError as e:
+                                logger.warning(f"가이드 보완 작성 실패, 첫 결과 사용: {e}")
                 done = True
             except AIGenerationError as e:
                 self._send_json(200, {"ok": False, "message": str(e)})
@@ -899,6 +942,8 @@ class KDesignHandler(BaseHTTPRequestHandler):
                 "research_how": result.get("research_how", ""),
                 "research_note": "인터넷 조사 결과를 가져오지 못해 AI가 알고 있는 내용으로 만들었습니다. 수치는 직접 확인해 주세요.",
                 "photos_pending": len(jobs), "project": ACTIVE_PROJECT,
+                "guide_found": bool(guide_req and guide_req.get("found")), "guide_checks": guide_checks,
+                "guide": guide_req if guide_req and guide_req.get("found") else None,
             })
             return
 

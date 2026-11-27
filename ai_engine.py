@@ -60,7 +60,7 @@ SYSTEM_PROMPT = """[작업] 사용자가 준 주제로 1600×900 발표 슬라�
 ③ 핵심 지표(KPI) 3~4개
   <div class="grid g4 mt-l"><div class="card"><div style="font-size:60px;font-weight:800;line-height:1.1">70.6%</div><h4 class="mt-s">지표 이름</h4><p class="dim">기준 시점 · 출처</p></div> …</div>
 ④ 큰 숫자 하나 강조
-  <div style="font-size:150px;font-weight:800;line-height:1" class="gradient-text">2.4%</div><p class="lede mt-m">이 숫자의 의미</p>
+  <div style="font-size:150px;font-weight:800;line-height:1.12" class="gradient-text">2.4%</div><p class="lede mt-m">이 숫자의 의미</p>
 ⑤ 좌우 2단(설명 + 요점 목록)
   <div class="grid g2 mt-l" style="align-items:start"><div><p class="lede">설명</p></div><div class="card"><ul style="font-size:22px;line-height:1.9;padding-left:1.2em"><li>요점</li>…</ul></div></div>
 ⑥ 비교(A vs B)

@@ -143,6 +143,8 @@ def compile_slide_deck(
         with open(os.path.join(CSS_DIR, "animations.css"), "r", encoding="utf-8") as f:
             anims_css = f.read()
         theme_css = get_theme_css(theme_id)
+        with open(os.path.join(CSS_DIR, "readability.css"), "r", encoding="utf-8") as f:
+            theme_css += "\n" + f.read()          # 한글 가독성 안전장치는 테마 뒤에
         with open(os.path.join(JS_DIR, "runtime.js"), "r", encoding="utf-8") as f:
             runtime_js = f.read()
         with open(os.path.join(JS_DIR, "fx", "fx-runtime.js"), "r", encoding="utf-8") as f:
@@ -169,6 +171,7 @@ def compile_slide_deck(
         <link rel="stylesheet" href="/static/css/base.css">
         <link rel="stylesheet" href="/static/css/animations.css">
         <link rel="stylesheet" id="theme-link" href="/static/css/themes/{theme_id}.css">
+        <link rel="stylesheet" href="/static/css/readability.css">
         <style>
         {font_override_css}
         {extra_css}

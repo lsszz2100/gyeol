@@ -1,0 +1,14 @@
+/* 한글 가독성 안전장치 — 모든 테마 뒤에 붙는다 (11-28)
+   테마가 제목 자간을 -.05em·행간 .98 처럼 좁게 잡아 한글 글자가 서로 붙고,
+   그라데이션 글자는 줄 상자 밖으로 나간 획(받침·ㄹ 등)이 잘리는 문제를 막는다. */
+html[data-theme] .slide :is(.h1, h1.title){letter-spacing:-.02em;line-height:1.2}
+html[data-theme] .slide :is(.h2, h2.title){letter-spacing:-.015em;line-height:1.24}
+html[data-theme] .slide :is(.h3, h3){letter-spacing:-.01em;line-height:1.3}
+/* AI가 큰 숫자·문구에 직접 쓴 좁은 행간(line-height:1 / .9) */
+html[data-theme] .slide :is([style*="line-height:1;"], [style*="line-height: 1;"], [style$="line-height:1"],
+  [style*="line-height:.9"], [style*="line-height:0.9"], [style*="line-height:.8"], [style*="line-height:0.8"]){line-height:1.12 !important}
+/* 그라데이션 글자: 배경이 글자 획 끝까지 칠해지게 위아래 여유 (줄 배치는 그대로) */
+html[data-theme] .slide .gradient-text{padding-block:.06em .12em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+html[data-theme] .slide :is(div, p, h1, h2).gradient-text{margin-bottom:-.06em}
+/* 표지·간지의 아주 큰 글자도 한글 획이 붙지 않게 */
+html[data-theme] .slide .sect > b{line-height:1}

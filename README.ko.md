@@ -11,6 +11,7 @@
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078d4?style=flat-square)](#-시작하기)
 [![Python](https://img.shields.io/badge/python-3.12-3776ab?style=flat-square)](#소스로-실행)
 [![Themes](https://img.shields.io/badge/themes-216-ff5d8f?style=flat-square)](#-디자인)
+[![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
 
 [English](README.md) · **한국어**
 
@@ -118,7 +119,11 @@ packaging/          설치 파일과 배포 스크립트
 - 로컬 API는 이 프로그램 화면에서 온, 실행할 때마다 바뀌는 토큰이 있는 요청만 받습니다.
 - 파일과 인터넷에서 가져온 글은 자료로만 쓰고 지시로 따르지 않습니다. AI가 만든 HTML은 화면에 보이기 전에 안전하게 정리합니다.
 
+## 📄 라이선스
+
+결은 [MIT 라이선스](LICENSE)로 공개합니다.
+함께 들어 있는 서체·아이콘·라이브러리는 각자의 라이선스를 따릅니다. 목록은 [`static/THIRD_PARTY_NOTICES.txt`](static/THIRD_PARTY_NOTICES.txt)에 있습니다.
+
 ## 📄 고지
 
-외부 서체·라이브러리 목록은 [`static/THIRD_PARTY_NOTICES.txt`](static/THIRD_PARTY_NOTICES.txt)에 있습니다.
 사용 환경과 연결한 AI 서비스에 따라 일부 기능이 다르게 동작할 수 있습니다.

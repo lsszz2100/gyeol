@@ -11,6 +11,7 @@ Type a topic or drop in your files, and get a researched, designed deck with a s
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078d4?style=flat-square)](#-getting-started)
 [![Python](https://img.shields.io/badge/python-3.12-3776ab?style=flat-square)](#run-from-source)
 [![Themes](https://img.shields.io/badge/themes-216-ff5d8f?style=flat-square)](#-design)
+[![License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
 
 **English** · [한국어](README.ko.md)
 
@@ -118,7 +119,11 @@ packaging/          installer and release scripts
 - The local API only accepts requests that carry a per-session token from the app's own origin.
 - Text from your files and the web is treated as material, never as instructions. Generated HTML is sanitized before it is shown.
 
+## 📄 License
+
+GYEOL is released under the [MIT License](LICENSE).
+Bundled fonts, icons and libraries keep their own licenses. See [`static/THIRD_PARTY_NOTICES.txt`](static/THIRD_PARTY_NOTICES.txt).
+
 ## 📄 Notices
 
-Third-party fonts and libraries are listed in [`static/THIRD_PARTY_NOTICES.txt`](static/THIRD_PARTY_NOTICES.txt).
 Features can behave differently depending on your environment and the AI service you connect.

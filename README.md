@@ -7,7 +7,7 @@
 **An AI presentation studio for Korean and English decks.**
 Type a topic or drop in your files, and get a researched, designed deck with a speaker script.
 
-[![Version](https://img.shields.io/badge/version-1.4.3-6d4aff?style=flat-square)](https://github.com/lsszz2100/gyeol-releases/releases/latest)
+[![Version](https://img.shields.io/badge/version-1.4.4-6d4aff?style=flat-square)](https://github.com/lsszz2100/gyeol-releases/releases/latest)
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078d4?style=flat-square)](#-getting-started)
 [![Python](https://img.shields.io/badge/python-3.12-3776ab?style=flat-square)](#run-from-source)
 [![Themes](https://img.shields.io/badge/themes-216-ff5d8f?style=flat-square)](#-design)

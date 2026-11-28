@@ -37,7 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove("on"), isErr ? 6000 : action ? 8000 : 3000);
   }
-  async function api(path, body) {
+  // 편집 상태 (아래 '바로 편집'에서 씀). 서버에 무언가 보내기 전에 고치던 내용을 먼저 저장해 순서가 꼬이지 않게 한다.
+  let editing = null, saveTimer = null, saveChain = Promise.resolve();
+  async function api(path, body, noWait) {
+    if (!noWait && body !== undefined) { if (editing) flushEdit(); await saveChain; }
     const opt = body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
     const res = await fetch(path, opt);
     const data = await res.json();
@@ -371,22 +374,26 @@ document.addEventListener("DOMContentLoaded", () => {
   // 미리보기 iframe이 슬라이드를 넘기면 알려줌
   window.addEventListener("message", (e) => {
     if (e.data && e.data.type === "deck-go" && e.source === frame.contentWindow) {
+      if (editing && editing.idx !== e.data.idx) finishEdit();
       state.idx = e.data.idx;
       markActive();
+      autoEdit();
     }
   });
 
   function goTo(i) {
-    if (editing) { finishEdit(true); }
+    if (editing && editing.idx !== i) finishEdit();
     i = Math.max(0, Math.min(state.slides.length - 1, i));
     state.idx = i;
     const d = deck();
     if (d) d.go(i);
     markActive();
+    autoEdit();
     if ($("ai-pop").classList.contains("open") && typeof updateAiTarget === "function") updateAiTarget();   // 열려 있는 AI 창이 이 슬라이드의 대화를 보이게
   }
 
   function reloadPreview(keepIdx = true) {
+    if (editing) finishEdit();
     const n = keepIdx ? state.idx + 1 : 1;
     if (!keepIdx) state.idx = 0;
     frame.src = `/preview?t=${Date.now()}#/${n}`;
@@ -403,6 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
     renderSlideList();
     markActive();
     markActiveTheme();
+    renderInspector();
   }
 
   // ───────────────── 조작 버튼 ─────────────────
@@ -437,18 +445,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (editing && editing.sel && !inField) {
       if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); objAction("del"); return; }
       if (e.key === "Escape") { editing.select(null); return; }
-      if (e.key.startsWith("Arrow") && editing.sel.classList.contains("g-obj")) {
-        e.preventDefault();
-        const o = editing.sel, d = e.shiftKey ? 10 : 1, n = (v) => parseFloat(v) || 0;
-        if (e.key === "ArrowLeft") o.style.left = n(o.style.left) - d + "px";
-        if (e.key === "ArrowRight") o.style.left = n(o.style.left) + d + "px";
-        if (e.key === "ArrowUp") o.style.top = n(o.style.top) - d + "px";
-        if (e.key === "ArrowDown") o.style.top = n(o.style.top) + d + "px";
-        return;
-      }
+      if (e.key.startsWith("Arrow") && editing.sel.classList.contains("g-obj")) { e.preventDefault(); nudge(editing.sel, e.key, e.shiftKey ? 10 : 1); return; }
     }
-    if (inField || editing || e.ctrlKey || e.metaKey || e.altKey) return;
-    if (e.key === "e" || e.key === "E") { startEdit(); e.preventDefault(); return; }
+    // 패널 버튼을 누른 뒤(초점이 바깥 화면)에도 Esc로 글자 선택을 풀 수 있게
+    if (editing && editing.text && !inField && e.key === "Escape") { try { editing.text.blur(); } catch (err) {} editing.pickText(null); return; }
+    if (inField || e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key === "ArrowRight" || e.key === "PageDown") { goTo(state.idx + 1); e.preventDefault(); }
     else if (e.key === "ArrowLeft" || e.key === "PageUp") { goTo(state.idx - 1); e.preventDefault(); }
     else if (e.key === "Home") goTo(0);
@@ -760,7 +761,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (badge) { badge.textContent = `🖼 사진 찾는 중 ${st.pending}장`; badge.style.display = st.pending ? "" : "none"; }
       if (seenRev < 0) seenRev = st.rev;
       else if (st.rev !== seenRev) { dirty = true; seenRev = st.rev; }
-      if (dirty && !editing) {
+      // 글자를 고치는 중이거나 그림을 고른 상태면 끝날 때까지 미룬다
+      const busy = editing && (saveTimer || editing.sel || editing.text);
+      if (dirty && !busy) {
         dirty = false;
         try { const r = await api("/api/active_project"); if (r.project && r.project.id === pid) applyProject(r.project, true); } catch (e) {}
       }
@@ -999,11 +1002,11 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   $("notes-text").addEventListener("keydown", (e) => { if (e.key === "Escape") { markActive(); $("notes-text").blur(); } });
 
-  // ── 편집 모드: 글자 직접 수정 + 그림·도형 옮기기/크기/삭제 (미리보기 iframe 안에서) ──
-  let editing = null;
+  // ── 바로 편집: 미리보기의 글자는 누르면 바로 고치고, 그림·도형은 끌어서 옮긴다 ──
+  // 누른 대상에 맞는 옵션(글꼴·크기·색 / 위치·크기·투명도)은 오른쪽 속성 패널에 뜨고, 고친 내용은 잠시 뒤 자동 저장된다.
   const EDIT_CSS = `[data-ep]{outline:2px dashed transparent;outline-offset:5px;border-radius:3px;cursor:text;transition:outline-color .12s}
-    [data-ep]:hover{outline-color:rgba(124,58,237,.55)}
-    [data-ep]:focus{outline:2px solid #7c3aed;background:rgba(124,58,237,.07)}
+    [data-ep]:hover{outline-color:rgba(124,58,237,.35)}
+    [data-ep]:focus,[data-ep].__tsel{outline:2px solid #7c3aed;background:rgba(124,58,237,.06)}
     [data-gobj]{cursor:move;user-select:none;-webkit-user-select:none}
     [data-gobj] img{-webkit-user-drag:none;user-select:none;pointer-events:none}
     [data-gobj]:hover{outline:2px dashed rgba(124,58,237,.6);outline-offset:2px}
@@ -1012,7 +1015,9 @@ document.addEventListener("DOMContentLoaded", () => {
     .__gh{position:absolute;width:22px;height:22px;background:#fff;border:3px solid #7c3aed;border-radius:50%;z-index:99;line-height:0}
     .__gh[data-h=nw]{left:-11px;top:-11px;cursor:nwse-resize}.__gh[data-h=ne]{right:-11px;top:-11px;cursor:nesw-resize}
     .__gh[data-h=sw]{left:-11px;bottom:-11px;cursor:nesw-resize}.__gh[data-h=se]{right:-11px;bottom:-11px;cursor:nwse-resize}`;
-  const OBJ_COLORS = [["var(--accent)", "강조색"], ["var(--accent-2)", "보조색"], ["var(--accent-3)", "포인트색"], ["var(--text-1)", "글자색"], ["var(--surface-2)", "연한 배경색"]];
+  // 색 견본: 테마 색(var)을 쓰면 테마를 바꿔도 함께 바뀐다
+  const THEME_COLORS = [["var(--accent)", "강조색"], ["var(--accent-2)", "보조색"], ["var(--accent-3)", "포인트색"], ["var(--text-1)", "글자색"], ["var(--surface-2)", "연한 배경색"]];
+  const FIXED_COLORS = [["#ffffff", "흰색"], ["#111111", "검은색"]];
   function hasOwnText(el) { return Array.from(el.childNodes).some((n) => n.nodeType === 3 && n.textContent.trim()); }
   function frameSlide(i) {
     let doc;
@@ -1030,13 +1035,14 @@ document.addEventListener("DOMContentLoaded", () => {
     return c.outerHTML.replace(/\s(contenteditable|spellcheck|data-ep)="[^"]*"/g, "");
   }
   function objSnapshot(sec) { return (sec.classList.contains("with-photo") ? "P|" : "-|") + liveObjs(sec).map(cleanObj).join(""); }
+  const canEdit = () => state.slides.length && !document.fullscreenElement && !$("loading").classList.contains("on");
+  function autoEdit() { if (!editing && canEdit()) startEdit(); }
 
   function startEdit(selectLast) {
-    if (editing) return;
+    if (editing) { if (selectLast) selectLastObj(); return; }
     const sec = frameSlide(state.idx);
-    if (!sec) { toast("미리보기가 아직 준비되지 않았습니다. 잠시 뒤 다시 눌러 주세요.", true); return; }
+    if (!sec) return;
     const doc = sec.ownerDocument, win = doc.defaultView;
-    $("ai-pop").classList.remove("open");
     const els = [];
     (function walk(el, path) {
       Array.from(el.children).forEach((c, i) => {
@@ -1048,7 +1054,9 @@ document.addEventListener("DOMContentLoaded", () => {
     })(sec, []);
     let st = doc.getElementById("__gyeol_edit_css");
     if (!st) { st = doc.createElement("style"); st.id = "__gyeol_edit_css"; st.textContent = EDIT_CSS; doc.head.appendChild(st); }
-    const ed = { idx: state.idx, sec, els, orig: els.map((el) => el.innerHTML), paths: els.map((el) => el.dataset.ep), win, doc, sel: null, objOrig: objSnapshot(sec) };
+    // styled: 패널에서 바꾼 요소별 CSS 속성 (저장 때 원본 요소에 옮겨 적는다)
+    const ed = { idx: state.idx, sec, els, orig: els.map((el) => el.innerHTML), paths: els.map((el) => el.dataset.ep), win, doc,
+      sel: null, text: null, range: null, styled: new Map(), objOrig: objSnapshot(sec) };
     editing = ed;
     liveObjs(sec).forEach((o) => { o.setAttribute("data-gobj", ""); o.querySelectorAll("img").forEach((im) => im.setAttribute("draggable", "false")); });
 
@@ -1059,23 +1067,39 @@ document.addEventListener("DOMContentLoaded", () => {
       if (ed.sel) { ed.sel.classList.remove("__gsel"); ed.sel.querySelectorAll(".__gh").forEach((h) => h.remove()); }
       ed.sel = o;
       if (o) {
+        pickText(null);
         o.classList.add("__gsel");
         if (o.classList.contains("g-obj")) ["nw", "ne", "sw", "se"].forEach((h) => { const d = doc.createElement("span"); d.className = "__gh"; d.dataset.h = h; o.appendChild(d); });
         if (doc.activeElement && doc.activeElement.blur) doc.activeElement.blur();
       }
-      showObjTools(o);
+      renderInspector();
+    }
+    function pickText(el) {
+      if (ed.text === el) return;
+      if (ed.text) ed.text.classList.remove("__tsel");
+      ed.text = el;
+      ed.range = null;
+      if (el) el.classList.add("__tsel");
     }
     ed.select = select;
+    ed.pickText = (el) => { if (el && ed.sel) select(null); pickText(el); renderInspector(); };
     ed.onDown = (e) => {
       const o = e.target.closest && e.target.closest("[data-gobj]");
-      if (!o) { if (!(e.target.closest && e.target.closest("[data-ep]"))) select(null); else if (ed.sel) select(null); return; }
+      if (!o) {
+        const t = e.target.closest && e.target.closest("[data-ep]");
+        if (ed.sel) select(null);
+        ed.pickText(t || null);
+        return;
+      }
       e.preventDefault();
       select(o);
       if (!o.classList.contains("g-obj")) return;  // 사진 패널은 옮기지 않는다
       const k = scale(), h = e.target.dataset && e.target.dataset.h;
       const s0 = { x: e.clientX, y: e.clientY, l: num(o.style.left), t: num(o.style.top), w: o.offsetWidth, h: o.offsetHeight };
-      const keepRatio = !!o.querySelector("img") || o.classList.contains("ico") || o.dataset.ratio === "1";
+      const keepRatio = objKeepsRatio(o);
+      let moved = false;
       const move = (ev) => {
+        moved = true;
         const dx = (ev.clientX - s0.x) / k, dy = (ev.clientY - s0.y) / k;
         if (!h) { o.style.left = Math.round(s0.l + dx) + "px"; o.style.top = Math.round(s0.t + dy) + "px"; return; }
         let w = s0.w + (h.includes("e") ? dx : -dx), hh = s0.h + (h.includes("s") ? dy : -dy);
@@ -1085,70 +1109,71 @@ document.addEventListener("DOMContentLoaded", () => {
         if (h.includes("w")) o.style.left = Math.round(s0.l + s0.w - w) + "px";
         if (h.includes("n")) o.style.top = Math.round(s0.t + s0.h - hh) + "px";
       };
-      const up = () => { doc.removeEventListener("mousemove", move); doc.removeEventListener("mouseup", up); };
+      const up = () => {
+        doc.removeEventListener("mousemove", move); doc.removeEventListener("mouseup", up);
+        if (moved) { scheduleSave(); renderInspector(); }
+      };
       doc.addEventListener("mousemove", move);
       doc.addEventListener("mouseup", up);
     };
     ed.onKey = (e) => {
       const inText = e.target.closest && e.target.closest("[data-ep]");
-      if (!inText && ed.sel) {
-        e.stopPropagation();
+      const mod = e.ctrlKey || e.metaKey;
+      // 글자를 고치거나 그림을 고른 동안에는 미리보기 자체의 단축키(슬라이드 넘김)를 막는다.
+      // 아무것도 고르지 않았으면 그대로 넘겨 화살표로 슬라이드를 넘길 수 있게 한다.
+      if (inText || ed.sel || (mod && (e.key === "z" || e.key === "Z"))) e.stopPropagation();
+      if (inText) {
+        if (e.key === "Enter") { e.preventDefault(); doc.execCommand("insertLineBreak"); }
+        else if (e.key === "Escape") { e.preventDefault(); inText.blur(); ed.pickText(null); }
+        else if (mod && (e.key === "s" || e.key === "S")) { e.preventDefault(); flushEdit(); }
+        return;
+      }
+      if (ed.sel) {
         if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); objAction("del"); return; }
         if (e.key === "Escape") { e.preventDefault(); select(null); return; }
-        if (e.key.startsWith("Arrow") && ed.sel.classList.contains("g-obj")) {
-          e.preventDefault();
-          const d = e.shiftKey ? 10 : 1, o = ed.sel;
-          if (e.key === "ArrowLeft") o.style.left = num(o.style.left) - d + "px";
-          if (e.key === "ArrowRight") o.style.left = num(o.style.left) + d + "px";
-          if (e.key === "ArrowUp") o.style.top = num(o.style.top) - d + "px";
-          if (e.key === "ArrowDown") o.style.top = num(o.style.top) + d + "px";
-          return;
-        }
+        if (e.key.startsWith("Arrow") && ed.sel.classList.contains("g-obj")) { e.preventDefault(); nudge(ed.sel, e.key, e.shiftKey ? 10 : 1); return; }
       }
-      if (!inText) { if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); finishEdit(false); } else e.stopPropagation(); return; }
-      e.stopPropagation();  // 미리보기의 슬라이드 넘김 단축키가 먹지 않게
-      if (e.key === "Enter") { e.preventDefault(); doc.execCommand("insertLineBreak"); }
-      else if (e.key === "Escape") { e.preventDefault(); finishEdit(false); }
-      else if ((e.ctrlKey || e.metaKey) && (e.key === "s" || e.key === "S")) { e.preventDefault(); finishEdit(true); }
+      if (mod && !e.shiftKey && (e.key === "z" || e.key === "Z")) { e.preventDefault(); undo(); }
     };
     ed.onPaste = (e) => {
       if (!e.target.closest || !e.target.closest("[data-ep]")) return;
       e.preventDefault();
       doc.execCommand("insertText", false, (e.clipboardData || win.clipboardData).getData("text/plain"));
     };
+    ed.onInput = (e) => { if (e.target.closest && e.target.closest("[data-ep]")) scheduleSave(); };
+    ed.onSelChange = () => {
+      const s = win.getSelection();
+      if (!ed.text || !s || !s.rangeCount) return;
+      const r = s.getRangeAt(0);
+      if (ed.text.contains(r.commonAncestorContainer)) ed.range = r.cloneRange();
+    };
+    ed.onFocusIn = (e) => { const t = e.target.closest && e.target.closest("[data-ep]"); if (t && t !== ed.text) ed.pickText(t); };
     win.addEventListener("keydown", ed.onKey, true);
     doc.addEventListener("paste", ed.onPaste, true);
     doc.addEventListener("mousedown", ed.onDown, true);
-    $("edit-banner").classList.add("on");
-    $("slide-stage").classList.add("editing");
-    $("btn-edit").classList.add("on");
-    $("btn-edit").textContent = "✔ 수정 마치기";
-    const objs = liveObjs(sec);
-    if (selectLast && objs.length) { select(objs[objs.length - 1]); try { frame.focus(); } catch (e) {} }
-    else if (els.length) els[0].focus();
-    else showObjTools(null);
+    doc.addEventListener("input", ed.onInput, true);
+    doc.addEventListener("selectionchange", ed.onSelChange);
+    doc.addEventListener("focusin", ed.onFocusIn, true);
+    if (selectLast) selectLastObj();
+    renderInspector();
   }
+  function selectLastObj() {
+    const ed = editing;
+    if (!ed) return;
+    const objs = liveObjs(ed.sec);
+    if (objs.length) { ed.select(objs[objs.length - 1]); try { frame.focus(); } catch (e) {} }
+  }
+  function nudge(o, key, d) {
+    const n = (v) => parseFloat(v) || 0;
+    if (key === "ArrowLeft") o.style.left = n(o.style.left) - d + "px";
+    if (key === "ArrowRight") o.style.left = n(o.style.left) + d + "px";
+    if (key === "ArrowUp") o.style.top = n(o.style.top) - d + "px";
+    if (key === "ArrowDown") o.style.top = n(o.style.top) + d + "px";
+    scheduleSave();
+    renderInspector();
+  }
+  function objKeepsRatio(o) { return !!o.querySelector("img") || o.classList.contains("ico") || o.dataset.ratio === "1"; }
 
-  function showObjTools(o) {
-    const on = !!o;
-    $("obj-tools").classList.toggle("on", on);
-    $("edit-hint").style.display = on ? "none" : "";
-    $("edit-sub").textContent = on ? (o.classList.contains("g-obj") ? "끌어서 이동 · 모서리로 크기 · Delete 삭제" : "사진 패널") : "Enter 줄바꿈 · Esc 취소";
-    if (!on) return;
-    const isObj = o.classList.contains("g-obj");
-    const colorable = isObj && !o.querySelector("img");
-    $("obj-colors").innerHTML = colorable ? OBJ_COLORS.map(([v, n]) => `<button class="sw" title="${n}" data-c="${v}"></button>`).join("") : "";
-    // 색 견본은 미리보기의 실제 테마 색으로 칠한다
-    const cs = editing && editing.win.getComputedStyle(editing.sec);
-    $("obj-colors").querySelectorAll(".sw").forEach((b) => {
-      const name = b.dataset.c.slice(4, -1);
-      b.style.background = (cs && cs.getPropertyValue(name).trim()) || "#999";
-      b.onclick = () => { o.style.color = b.dataset.c; };
-    });
-    document.querySelector('#obj-tools [data-o="front"]').style.display = isObj ? "" : "none";
-    document.querySelector('#obj-tools [data-o="back"]').style.display = isObj ? "" : "none";
-    document.querySelector('#obj-tools [data-o="swap"]').style.display = isObj && !o.querySelector("img") ? "none" : "";
-  }
   function objAction(a) {
     const ed = editing;
     if (!ed || !ed.sel) return;
@@ -1160,69 +1185,358 @@ document.addEventListener("DOMContentLoaded", () => {
       if (ed.win.__gyeolFit) ed.win.__gyeolFit(ed.sec);
     } else if (a === "front") { o.classList.remove("back"); ed.sec.appendChild(o); }
     else if (a === "back") { o.classList.add("back"); }
-    else if (a === "swap") { openMedia(o.classList.contains("g-photo") ? "search" : "search", { swap: o }); }
-  }
-  document.querySelectorAll("#obj-tools [data-o]").forEach((b) => b.onclick = () => objAction(b.dataset.o));
-
-  function stopEditUi() {
-    const ed = editing;
-    editing = null;
-    $("edit-banner").classList.remove("on");
-    $("slide-stage").classList.remove("editing");
-    $("btn-edit").classList.remove("on");
-    $("btn-edit").textContent = "✏️ 편집";
-    showObjTools(null);
-    if (ed) {
-      try {
-        ed.win.removeEventListener("keydown", ed.onKey, true);
-        ed.doc.removeEventListener("paste", ed.onPaste, true);
-        ed.doc.removeEventListener("mousedown", ed.onDown, true);
-      } catch (e) {}
+    else if (a === "dup") {
+      const holder = ed.doc.createElement("template");
+      holder.innerHTML = cleanObj(o);
+      const c = holder.content.firstElementChild;
+      c.style.left = (parseFloat(o.style.left) || 0) + 30 + "px";
+      c.style.top = (parseFloat(o.style.top) || 0) + 30 + "px";
+      c.setAttribute("data-gobj", "");
+      c.querySelectorAll("img").forEach((im) => im.setAttribute("draggable", "false"));
+      o.after(c);
+      ed.select(c);
     }
-    return ed;
+    else if (a === "swap") { openMedia("search", { swap: o }); return; }
+    scheduleSave();
+    renderInspector();
+  }
+
+  // ── 속성 패널 ──
+  const rgbHex = (c) => {
+    const m = String(c || "").match(/\d+(\.\d+)?/g);
+    if (!m || m.length < 3) return "#000000";
+    return "#" + m.slice(0, 3).map((v) => Math.round(+v).toString(16).padStart(2, "0")).join("");
+  };
+  function swatchesHtml(kind) {
+    const all = THEME_COLORS.concat(FIXED_COLORS);
+    return `<div class="insp-sw">${all.map(([v, n]) => `<button title="${n}" data-${kind}="${esc(v)}"></button>`).join("")}<input type="color" title="직접 고르기" data-${kind}-pick></div>`;
+  }
+  function paintSwatches(box, kind) {
+    const ed = editing;
+    const cs = ed && ed.win.getComputedStyle(ed.sec);
+    box.querySelectorAll(`[data-${kind}]`).forEach((b) => {
+      const v = b.dataset[kind];
+      b.style.background = v.startsWith("var(") ? ((cs && cs.getPropertyValue(v.slice(4, -1)).trim()) || "#999") : v;
+    });
+  }
+  function fontOptions(cur) {
+    const opts = (state.fonts || []).map((f) => `<option value="${esc(f.id)}"${f.id === cur ? " selected" : ""}>${esc(f.id === "theme" ? "슬라이드 기본 서체" : f.name)}</option>`);
+    if (cur === "other") opts.push('<option value="other" selected>(테마 서체)</option>');
+    return opts.join("");
+  }
+  function fontIdOf(family) {
+    const fam = String(family || "").replace(/['"]/g, "").toLowerCase();
+    const f = (state.fonts || []).find((x) => x.family && fam.startsWith(x.family.split(",")[0].replace(/['"]/g, "").trim().toLowerCase().slice(0, 12)));
+    return f ? f.id : "theme";
+  }
+  let saveState = "";
+  function setSaveState(s) {
+    saveState = s;
+    const el = $("insp-save");
+    el.className = "insp-save" + (s === "dirty" ? " dirty" : s === "err" ? " err" : "");
+    el.textContent = { dirty: "● 고치는 중", saving: "저장 중…", saved: "✓ 자동 저장됨", err: "저장 실패" }[s] || "";
+  }
+
+  function renderInspector() {
+    const box = $("insp-body"), ed = editing;
+    $("insp").classList.toggle("off", !state.slides.length);
+    if (!ed || (!ed.sel && !ed.text)) {
+      $("insp-title").textContent = "속성";
+      box.innerHTML = `<div class="insp-empty"><b>글자</b>를 누르면 바로 고칠 수 있고, 여기에 글꼴·크기·색 옵션이 나옵니다.<br><br><b>그림·도형</b>을 누르면 끌어서 옮기고, 위치·크기·투명도를 바꿀 수 있습니다.</div>
+        <div class="insp-tip">Enter 줄바꿈 · Esc 선택 해제 · Ctrl+Z 되돌리기<br>고친 내용은 자동으로 저장됩니다.</div>`;
+      return;
+    }
+    if (ed.text) return renderTextInspector(box, ed);
+    renderObjInspector(box, ed);
+  }
+
+  function renderTextInspector(box, ed) {
+    const el = ed.text;
+    let base = el;
+    if (ed.range && !ed.range.collapsed) {
+      const n = ed.range.startContainer;
+      base = n.nodeType === 1 ? n : n.parentElement;
+      if (!el.contains(base)) base = el;
+    }
+    const cs = ed.win.getComputedStyle(base);
+    const fs = parseFloat(cs.fontSize) || 16;
+    const lh = cs.lineHeight === "normal" ? 1.2 : (parseFloat(cs.lineHeight) || fs * 1.2) / fs;
+    const bold = (parseInt(cs.fontWeight, 10) || 400) >= 600;
+    const fontId = el.style.fontFamily || base !== el ? fontIdOf(cs.fontFamily) : "theme";
+    $("insp-title").textContent = ed.range && !ed.range.collapsed ? "글자 (선택한 부분)" : "글자";
+    const ta = cs.textAlign === "start" ? "left" : cs.textAlign === "end" ? "right" : cs.textAlign;
+    box.innerHTML = `
+      <div class="insp-grp"><label>글꼴</label><select id="ti-font">${fontOptions(fontId)}</select></div>
+      <div class="insp-grp"><label>크기 (px)</label>
+        <div class="insp-row"><button class="insp-step" data-fs="-1" title="작게">−</button><input type="number" id="ti-size" min="8" max="240" step="1" value="${Math.round(fs)}"><button class="insp-step" data-fs="1" title="크게">＋</button></div></div>
+      <div class="insp-grp"><label>스타일</label>
+        <div class="insp-tg"><button data-cmd="bold" class="${bold ? "on" : ""}" title="굵게 (Ctrl+B)"><b>B</b></button><button data-cmd="italic" class="${cs.fontStyle === "italic" ? "on" : ""}" title="기울임 (Ctrl+I)"><i>I</i></button><button data-cmd="underline" class="${/underline/.test(cs.textDecorationLine || cs.textDecoration) ? "on" : ""}" title="밑줄 (Ctrl+U)"><u>U</u></button></div></div>
+      <div class="insp-grp"><label>글자색</label>${swatchesHtml("tc")}</div>
+      <div class="insp-grp"><label>정렬</label>
+        <div class="insp-tg">${[["left", "왼쪽"], ["center", "가운데"], ["right", "오른쪽"]].map(([v, n]) => `<button data-al="${v}" class="${ta === v ? "on" : ""}">${n}</button>`).join("")}</div></div>
+      <div class="insp-grp"><label>줄 간격</label>
+        <select id="ti-lh">${[1, 1.1, 1.2, 1.35, 1.5, 1.7, 2].map((v) => `<option value="${v}"${Math.abs(v - lh) < 0.06 ? " selected" : ""}>${Number.isInteger(v) ? v.toFixed(1) : v}</option>`).join("")}${[1, 1.1, 1.2, 1.35, 1.5, 1.7, 2].some((v) => Math.abs(v - lh) < 0.06) ? "" : `<option selected value="">${lh.toFixed(2)}</option>`}</select></div>
+      <div class="insp-acts"><button class="btn" data-ta="reset" title="이 글자에 준 서식을 모두 지웁니다">서식 지우기</button><button class="btn" data-ta="done">선택 해제</button></div>
+      <div class="insp-tip">글자 일부를 드래그해 고르면 그 부분에만 적용됩니다.</div>`;
+    const sw = box.querySelector(".insp-sw");
+    paintSwatches(sw, "tc");
+    sw.querySelector("[data-tc-pick]").value = rgbHex(cs.color);
+    sw.querySelectorAll("[data-tc]").forEach((b) => b.onclick = () => styleText("color", b.dataset.tc));
+    sw.querySelector("[data-tc-pick]").oninput = (e) => styleText("color", e.target.value, true);
+    $("ti-font").onchange = (e) => {
+      const f = (state.fonts || []).find((x) => x.id === e.target.value);
+      styleText("font-family", f && f.family ? f.family : "");
+    };
+    const setSize = (v) => { v = Math.max(8, Math.min(240, Math.round(v))); styleText("font-size", v + "px", true); $("ti-size").value = v; };
+    $("ti-size").onchange = (e) => setSize(+e.target.value || fs);
+    box.querySelectorAll("[data-fs]").forEach((b) => b.onclick = () => {
+      const cur = +$("ti-size").value || fs;
+      setSize(cur + (+b.dataset.fs) * (cur >= 40 ? 4 : 2));
+    });
+    box.querySelectorAll("[data-cmd]").forEach((b) => b.onclick = () => toggleTextCmd(b.dataset.cmd));
+    box.querySelectorAll("[data-al]").forEach((b) => b.onclick = () => styleBlock("text-align", b.dataset.al));
+    $("ti-lh").onchange = (e) => { if (e.target.value) styleBlock("line-height", e.target.value); };
+    box.querySelector('[data-ta="reset"]').onclick = () => resetTextStyle();
+    box.querySelector('[data-ta="done"]').onclick = () => { if (ed.text) ed.text.blur(); ed.pickText(null); };
+  }
+
+  function markStyled(el, prop) {
+    const ed = editing;
+    if (!ed.styled.has(el)) ed.styled.set(el, new Set());
+    ed.styled.get(el).add(prop);
+  }
+  // 선택한 부분이 있으면 그 부분만 <span style>로 감싸고, 없으면 글자 상자 전체에 적용
+  function styleText(prop, val, keepPanel) {
+    const ed = editing, el = ed && ed.text;
+    if (!el) return;
+    const r = ed.range;
+    const partial = r && !r.collapsed && el.contains(r.commonAncestorContainer) && r.toString().trim() && r.toString().trim() !== el.textContent.trim();
+    if (partial) {
+      const span = ed.doc.createElement("span");
+      if (val) span.style.setProperty(prop, val);
+      try { span.appendChild(r.extractContents()); r.insertNode(span); } catch (e) { return; }
+      span.querySelectorAll("span").forEach((s) => { s.style.removeProperty(prop); if (!s.getAttribute("style")) s.replaceWith(...s.childNodes); });
+      const s = ed.win.getSelection(), nr = ed.doc.createRange();
+      nr.selectNodeContents(span);
+      s.removeAllRanges(); s.addRange(nr);
+      ed.range = nr.cloneRange();
+    } else {
+      if (val) el.style.setProperty(prop, val); else el.style.removeProperty(prop);
+      // 안쪽 부분 서식이 전체 변경을 가리지 않게 같은 속성은 지운다
+      el.querySelectorAll("[style]").forEach((s) => s.style.removeProperty(prop));
+      if (prop === "font-size") el.removeAttribute("data-fit-fs");
+      markStyled(el, prop);
+    }
+    scheduleSave();
+    if (!keepPanel) renderInspector();
+  }
+  function styleBlock(prop, val) {
+    const el = editing && editing.text;
+    if (!el) return;
+    el.style.setProperty(prop, val);
+    markStyled(el, prop);
+    scheduleSave();
+    renderInspector();
+  }
+  function toggleTextCmd(cmd) {
+    const ed = editing, el = ed && ed.text;
+    if (!el) return;
+    const r = ed.range;
+    if (r && !r.collapsed && r.toString().trim() && r.toString().trim() !== el.textContent.trim()) {
+      el.focus();
+      const s = ed.win.getSelection();
+      s.removeAllRanges(); s.addRange(r);
+      ed.doc.execCommand("styleWithCSS", false, true);
+      ed.doc.execCommand(cmd);
+      ed.range = s.rangeCount ? s.getRangeAt(0).cloneRange() : null;
+      scheduleSave();
+    } else {
+      const cs = ed.win.getComputedStyle(el);
+      if (cmd === "bold") el.style.fontWeight = (parseInt(cs.fontWeight, 10) || 400) >= 600 ? "400" : "800";
+      if (cmd === "italic") el.style.fontStyle = cs.fontStyle === "italic" ? "normal" : "italic";
+      if (cmd === "underline") el.style.textDecoration = /underline/.test(cs.textDecorationLine || cs.textDecoration) ? "none" : "underline";
+      markStyled(el, { bold: "font-weight", italic: "font-style", underline: "text-decoration" }[cmd]);
+      scheduleSave();
+    }
+    renderInspector();
+  }
+  function resetTextStyle() {
+    const ed = editing, el = ed && ed.text;
+    if (!el) return;
+    ["font-family", "font-size", "font-weight", "font-style", "text-decoration", "color", "text-align", "line-height"].forEach((p) => { el.style.removeProperty(p); markStyled(el, p); });
+    el.querySelectorAll("span[style], b[style], i[style], u[style]").forEach((s) => s.replaceWith(...s.childNodes));
+    el.normalize();
+    scheduleSave();
+    renderInspector();
+  }
+
+  function renderObjInspector(box, ed) {
+    const o = ed.sel, isObj = o.classList.contains("g-obj"), img = o.querySelector("img");
+    const fill = o.querySelector(".g-fill");
+    const n = (v) => Math.round(parseFloat(v) || 0);
+    $("insp-title").textContent = !isObj ? "사진 패널" : img ? "그림" : o.classList.contains("ico") ? "아이콘" : "도형";
+    const op = Math.round((parseFloat(o.style.opacity) || 1) * 100);
+    const radTarget = img || fill;
+    const rad = radTarget ? n(ed.win.getComputedStyle(radTarget).borderTopLeftRadius) : 0;
+    box.innerHTML = (isObj ? `
+      <div class="insp-grp"><label>위치 · 크기 (슬라이드 1600×900 기준)</label>
+        <div class="insp-xy">
+          <span>X<input type="number" data-ob="left" value="${n(o.style.left)}"></span><span>Y<input type="number" data-ob="top" value="${n(o.style.top)}"></span>
+          <span>폭<input type="number" data-ob="width" min="4" value="${o.offsetWidth}"></span><span>높이<input type="number" data-ob="height" min="4" value="${o.offsetHeight}"></span>
+        </div>
+        <div class="insp-tip">${objKeepsRatio(o) ? "비율을 지키며 크기가 바뀝니다 (모서리를 Shift+드래그하면 자유 비율)" : "모서리를 끌거나 숫자로 크기를 바꾸세요"} · 화살표 키로 1px, Shift+화살표로 10px 이동</div></div>
+      <div class="insp-grp"><label>투명도 <span id="ob-op-v">${op}%</span></label><input type="range" id="ob-op" min="10" max="100" step="5" value="${op}"></div>
+      ${radTarget ? `<div class="insp-grp"><label>모서리 둥글게 <span id="ob-rad-v">${rad}px</span></label><input type="range" id="ob-rad" min="0" max="${Math.round(Math.min(o.offsetWidth, o.offsetHeight) / 2)}" step="2" value="${rad}"></div>` : ""}
+      ${img ? "" : `<div class="insp-grp"><label>색</label>${swatchesHtml("oc")}</div>`}
+      <div class="insp-acts">
+        <button class="btn" data-o="front">앞으로</button><button class="btn" data-o="back">글자 뒤로</button>
+        <button class="btn" data-o="dup">복제</button>${img ? '<button class="btn" data-o="swap">사진 바꾸기</button>' : ""}
+        <button class="btn danger" data-o="del">삭제</button>
+      </div>` : `
+      <div class="insp-tip">슬라이드 옆에 붙는 사진 자리입니다.</div>
+      <div class="insp-acts"><button class="btn" data-o="swap">사진 바꾸기</button><button class="btn danger" data-o="del">삭제</button></div>`)
+      + '<div class="insp-tip">Delete 삭제 · Esc 선택 해제</div>';
+    box.querySelectorAll("[data-o]").forEach((b) => b.onclick = () => objAction(b.dataset.o));
+    box.querySelectorAll("[data-ob]").forEach((inp) => inp.onchange = () => {
+      const prop = inp.dataset.ob, v = Math.round(+inp.value || 0);
+      if ((prop === "width" || prop === "height") && objKeepsRatio(o)) {
+        const r = o.offsetWidth / (o.offsetHeight || 1);
+        if (prop === "width") { o.style.width = Math.max(4, v) + "px"; o.style.height = Math.round(Math.max(4, v) / r) + "px"; }
+        else { o.style.height = Math.max(4, v) + "px"; o.style.width = Math.round(Math.max(4, v) * r) + "px"; }
+      } else o.style[prop] = (prop === "width" || prop === "height" ? Math.max(4, v) : v) + "px";
+      scheduleSave();
+      renderInspector();
+    });
+    const opEl = $("ob-op");
+    if (opEl) opEl.oninput = () => { const v = +opEl.value; if (v >= 100) o.style.removeProperty("opacity"); else o.style.opacity = (v / 100).toFixed(2); $("ob-op-v").textContent = v + "%"; scheduleSave(); };
+    const radEl = $("ob-rad");
+    if (radEl) radEl.oninput = () => { radTarget.style.borderRadius = radEl.value + "px"; $("ob-rad-v").textContent = radEl.value + "px"; scheduleSave(); };
+    const sw = box.querySelector(".insp-sw");
+    if (sw) {
+      paintSwatches(sw, "oc");
+      sw.querySelector("[data-oc-pick]").value = rgbHex(ed.win.getComputedStyle(o).color);
+      sw.querySelectorAll("[data-oc]").forEach((b) => b.onclick = () => { o.style.color = b.dataset.oc; scheduleSave(); });
+      sw.querySelector("[data-oc-pick]").oninput = (e) => { o.style.color = e.target.value; scheduleSave(); };
+    }
+  }
+
+  // ── 자동 저장: 고친 뒤 잠시 멈추면 이 슬라이드만 조용히 저장 (미리보기를 다시 불러오지 않음) ──
+  function scheduleSave() {
+    clearTimeout(saveTimer);
+    setSaveState("dirty");
+    saveTimer = setTimeout(() => { saveTimer = null; flushEdit(); }, 900);
   }
   function cleanInline(h) {
-    return h.replace(/\s(contenteditable|spellcheck|data-ep|data-fit-fs)="[^"]*"/g, "").replace(/(<br>\s*)+$/, "").trim();
+    return h.replace(/\s(contenteditable|spellcheck|data-ep|data-fit-fs)="[^"]*"/g, "").replace(/\s?__tsel/g, "").replace(/\sclass=""/g, "").replace(/(<br>\s*)+$/, "").trim();
   }
-  function finishEdit(save) {
-    const ed = stopEditUi();
-    if (!ed) return;
-    if (ed.sel) ed.select(null);
-    ed.sec.querySelectorAll("[data-fit-fs]").forEach((el) => { el.style.fontSize = el.dataset.fitFs; el.removeAttribute("data-fit-fs"); });
-    const changed = ed.els.map((el, k) => ({ el, k })).filter(({ el, k }) => el.innerHTML !== ed.orig[k]);
+  // 원본 HTML에서 같은 위치의 요소를 찾아 바뀐 글자·서식·그림만 옮겨 넣은 슬라이드 HTML (바뀐 게 없으면 null)
+  function buildChange(ed) {
+    const changed = ed.els.map((el, k) => ({ el, k })).filter(({ el, k }) => el.innerHTML !== ed.orig[k] || ed.styled.has(el));
     const objNow = objSnapshot(ed.sec);
     const objChanged = objNow !== ed.objOrig;
-    ed.els.forEach((el) => { el.removeAttribute("contenteditable"); el.removeAttribute("data-ep"); el.removeAttribute("spellcheck"); });
-    if (!save) { if (changed.length || objChanged) reloadPreview(true); return; }
-    if (!changed.length && !objChanged) { liveObjs(ed.sec).forEach((o) => o.removeAttribute("data-gobj")); return; }
-    // 원본 HTML에서 같은 위치의 요소를 찾아 글자만 바꿔 넣는다 (경로는 편집 시작 때 기록)
+    if (!changed.length && !objChanged) return null;
     const tpl = document.createElement("template");
     tpl.innerHTML = state.project.slides_html || "";
     const src = tpl.content.querySelectorAll("section.slide")[ed.idx];
-    if (!src) { toast("원본 슬라이드를 찾지 못했습니다.", true); reloadPreview(true); return; }
+    if (!src) return { error: "원본 슬라이드를 찾지 못했습니다." };
     for (const { el, k } of changed) {
       let node = src;
-      for (const n of ed.paths[k].split(".")) node = node && node.children[+n];
-      if (!node || node.tagName !== el.tagName) { toast("수정한 위치를 찾지 못했습니다. 다시 시도해 주세요.", true); reloadPreview(true); return; }
+      for (const i of ed.paths[k].split(".")) node = node && node.children[+i];
+      if (!node || node.tagName !== el.tagName) return { error: "수정한 위치를 찾지 못했습니다." };
       node.innerHTML = cleanInline(el.innerHTML);
+      const props = ed.styled.get(el);
+      if (props) {
+        props.forEach((p) => {
+          const v = p === "font-size" && el.dataset.fitFs !== undefined ? el.dataset.fitFs : el.style.getPropertyValue(p);
+          if (v) node.style.setProperty(p, v); else node.style.removeProperty(p);
+        });
+        if (!node.getAttribute("style")) node.removeAttribute("style");
+      }
     }
     if (objChanged) {
-      src.querySelectorAll(":scope > .g-obj, :scope > .g-photo").forEach((n) => n.remove());
+      src.querySelectorAll(":scope > .g-obj, :scope > .g-photo").forEach((x) => x.remove());
       const live = liveObjs(ed.sec);
       const notes = src.querySelector(":scope > aside.notes");
       const holder = document.createElement("template");
       live.forEach((o) => {
         holder.innerHTML = cleanObj(o);
-        const n = holder.content.firstElementChild;
-        if (n.classList.contains("g-photo")) src.prepend(n); else src.insertBefore(n, notes);
+        const x = holder.content.firstElementChild;
+        if (x.classList.contains("g-photo")) src.prepend(x); else src.insertBefore(x, notes);
       });
       src.classList.toggle("with-photo", live.some((o) => o.classList.contains("g-photo")));
     }
-    slideOp("replace", { idx: ed.idx, html: src.outerHTML }, "수정 내용을 저장했습니다.");
+    return { html: src.outerHTML, objNow };
   }
-  $("btn-edit").onclick = () => (editing ? finishEdit(true) : startEdit());
-  $("btn-edit-save").onclick = () => finishEdit(true);
-  $("btn-edit-cancel").onclick = () => finishEdit(false);
+  // 지금까지 고친 것을 바로 저장 대기열에 넣는다 (다른 서버 요청은 이 저장이 끝난 뒤 나간다)
+  function flushEdit() {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+    const ed = editing;
+    if (!ed) return saveChain;
+    const ch = buildChange(ed);
+    if (!ch) { if (saveState === "dirty") setSaveState("saved"); return saveChain; }
+    if (ch.error) { toast(ch.error + " 미리보기를 다시 불러옵니다.", true); stopEditUi(); reloadPreview(true); return saveChain; }
+    ed.orig = ed.els.map((el) => el.innerHTML);
+    ed.styled.clear();
+    ed.objOrig = ch.objNow;
+    const idx = ed.idx;
+    setSaveState("saving");
+    saveChain = saveChain.then(async () => {
+      let res = null;
+      try { res = await api("/api/slide_op", { op: "replace", idx, html: ch.html }, true); } catch (e) {}
+      if (!res || !res.ok) { setSaveState("err"); toast((res && res.message) || "자동 저장에 실패했습니다. 서버 연결을 확인해 주세요.", true); return; }
+      $("btn-undo").disabled = !res.can_undo;
+      if (res.project) { state.project = res.project; state.slides = parseSlides(res.project.slides_html); refreshThumb(idx); }
+      if (!saveTimer) setSaveState("saved");
+    }).catch(() => {});
+    return saveChain;
+  }
+  function refreshThumb(i) {
+    const item = document.querySelectorAll(".thumb-item")[i];
+    if (!item) return;
+    const f = item.querySelector("iframe"), cap = item.querySelector(".thumb-cap");
+    if (cap && state.slides[i]) cap.textContent = state.slides[i].title;
+    if (f) f.src = `/preview?preview=${i + 1}&thumb=1&t=${Date.now()}`;
+  }
+
+  function stopEditUi() {
+    const ed = editing;
+    editing = null;
+    clearTimeout(saveTimer);
+    saveTimer = null;
+    if (ed) {
+      try {
+        ed.win.removeEventListener("keydown", ed.onKey, true);
+        ed.doc.removeEventListener("paste", ed.onPaste, true);
+        ed.doc.removeEventListener("mousedown", ed.onDown, true);
+        ed.doc.removeEventListener("input", ed.onInput, true);
+        ed.doc.removeEventListener("selectionchange", ed.onSelChange);
+        ed.doc.removeEventListener("focusin", ed.onFocusIn, true);
+      } catch (e) {}
+    }
+    renderInspector();
+    return ed;
+  }
+  // 저장하고 편집 표시를 걷어낸다 (다른 슬라이드로 넘어가거나 발표를 시작할 때)
+  function finishEdit() {
+    const ed = editing;
+    if (!ed) return;
+    flushEdit();
+    if (ed.sel) ed.select(null);
+    if (ed.text) { ed.text.classList.remove("__tsel"); try { ed.text.blur(); } catch (e) {} }
+    stopEditUi();
+    try {
+      ed.els.forEach((el) => { el.removeAttribute("contenteditable"); el.removeAttribute("data-ep"); el.removeAttribute("spellcheck"); });
+      liveObjs(ed.sec).forEach((o) => o.removeAttribute("data-gobj"));
+    } catch (e) {}
+  }
+  // 미리보기가 새로 뜰 때마다 그 슬라이드를 바로 편집할 수 있게
+  frame.addEventListener("load", () => {
+    if (editing) stopEditUi();
+    const d = frame.contentDocument;
+    (d && d.fonts ? d.fonts.ready : Promise.resolve()).then(() => setTimeout(autoEdit, 150));
+  });
+  document.addEventListener("fullscreenchange", () => { if (document.fullscreenElement) finishEdit(); else setTimeout(autoEdit, 100); });
 
   // 미리보기가 새로 뜬 뒤에 할 일 (예: 방금 넣은 그림 선택)
   function afterPreview(fn) {
@@ -1279,7 +1593,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 슬라이드 오른쪽 가운데쯤에 넣고, 바로 편집 모드로 들어가 선택해 둔다
     const left = Math.max(40, 1600 - 120 - w), top = Math.max(40, Math.round((900 - h) / 2));
     const html = `<div class="g-obj${cls ? " " + cls : ""}"${extraAttr || ""} style="left:${left}px;top:${top}px;width:${Math.round(w)}px;height:${Math.round(h)}px;color:var(--accent)">${inner}</div>`;
-    if (editing) finishEdit(true);
+    flushEdit();
     $("media-modal").classList.remove("open");
     const r = await slideOp("add_obj", { idx: state.idx, html });
     if (r && r.ok) afterPreview(() => startEdit(true));
@@ -1291,11 +1605,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const im = o.querySelector("img");
       if (im) im.src = url;
       $("media-modal").classList.remove("open");
-      toast("사진을 바꿨습니다. 저장을 눌러 마무리하세요.");
+      if (editing) { scheduleSave(); renderInspector(); }
+      toast("사진을 바꿨습니다.");
       return;
     }
     if (placeMode() === "panel") {
-      if (editing) finishEdit(true);
+      flushEdit();
       $("media-modal").classList.remove("open");
       await slideOp("set_photo", { idx: state.idx, url });
       return;
@@ -1453,7 +1768,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateAiTarget();
   }
   function openAi(m) {
-    if (editing) finishEdit(true);
+    flushEdit();
     setAiMode(m);
     $("ai-pop").classList.add("open");
     $("ai-text").focus();
@@ -1495,7 +1810,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // 장표 추천: 이 슬라이드에 어울리는 구성·꾸밈·스타일 (계산은 서버에서 바로, 적용은 AI 고치기로)
   function advClose() { $("adv-pop").classList.remove("open"); $("btn-advise").classList.remove("on"); }
   async function advShow() {
-    if (editing) finishEdit(true);
+    flushEdit();
     $("ai-pop").classList.remove("open");
     $("adv-pop").classList.add("open"); $("btn-advise").classList.add("on");
     $("adv-title").textContent = `${state.idx + 1}번 장표 추천`;
@@ -1559,7 +1874,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let reviewTimer = null;
   $("btn-review").onclick = async () => {
     if (reviewTimer) return;
-    if (editing) finishEdit(true);
+    flushEdit();
     let r;
     try { r = await api("/api/review_start", {}); } catch (e) { toast("서버와 통신하지 못했습니다.", true); return; }
     if (!r.ok) { toast(r.message || "검수를 시작하지 못했습니다.", true); return; }

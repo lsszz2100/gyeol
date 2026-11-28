@@ -203,15 +203,43 @@
     .logo-prev img { height: 36px; max-width: 140px; object-fit: contain; border: 1px dashed var(--line-2); border-radius: 6px; padding: 3px; background: #fff; }
 
     /* ── 슬라이드별 편집 ── */
+    /* ── 오른쪽 속성 패널 (글자·그림을 누르면 그에 맞는 옵션) ── */
+    .insp { width: 248px; flex: none; background: var(--panel); border-left: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; }
+    .insp.off { display: none; }
+    .insp-head { padding: 12px 14px 10px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .insp-head b { font-size: 13.5px; font-weight: 800; }
+    .insp-save { font-size: 11px; font-weight: 600; color: var(--ink-3); }
+    .insp-save.dirty { color: #b45309; } .insp-save.err { color: #dc2626; }
+    .insp-body { flex: 1; overflow-y: auto; padding: 12px 14px 18px; display: flex; flex-direction: column; gap: 14px; }
+    .insp-empty { color: var(--ink-2); line-height: 1.65; font-size: 12.5px; background: var(--subtle); border-radius: 10px; padding: 12px; }
+    .insp-empty b { color: var(--ink); }
+    .insp-grp { display: flex; flex-direction: column; gap: 6px; }
+    .insp-grp > label, .insp-lab { font-size: 11px; font-weight: 700; color: var(--ink-3); letter-spacing: .02em; }
+    .insp select, .insp input[type=number] { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: var(--subtle); font-weight: 600; }
+    .insp select:focus, .insp input[type=number]:focus { outline: none; border-color: #b9a3ee; background: #fff; }
+    .insp-row { display: flex; gap: 6px; align-items: center; }
+    .insp-row > * { flex: 1; min-width: 0; }
+    .insp-tg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    .insp-tg button { flex: 1; border: 0; border-right: 1px solid var(--line); background: var(--panel); padding: 6px 0; font-weight: 700; color: var(--ink-2); }
+    .insp-tg button:last-child { border-right: 0; }
+    .insp-tg button:hover { background: var(--subtle); }
+    .insp-tg button.on { background: var(--brand-soft); color: var(--brand); }
+    .insp-step { flex: none !important; width: 30px; height: 31px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font-weight: 800; font-size: 15px; color: var(--ink-2); }
+    .insp-step:hover { background: var(--subtle); }
+    .insp-sw { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+    .insp-sw button { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--line-2); padding: 0; }
+    .insp-sw button:hover { box-shadow: 0 0 0 2px var(--brand); }
+    .insp-sw input[type=color] { width: 28px; height: 26px; border: 1px solid var(--line); border-radius: 7px; padding: 1px; background: #fff; cursor: pointer; }
+    .insp input[type=range] { width: 100%; accent-color: var(--brand); }
+    .insp-xy { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .insp-xy span { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; color: var(--ink-3); }
+    .insp-xy span input { flex: 1; }
+    .insp-acts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .insp-acts .btn { justify-content: center; padding: 7px 6px; font-size: 12px; }
+    .insp-acts .btn.danger { color: #dc2626; }
+    .insp-tip { font-size: 11px; color: var(--ink-3); line-height: 1.5; }
     .center { position: relative; }
     .stage-wrap { position: relative; }
-    .slide-stage.editing { box-shadow: 0 0 0 3px var(--brand), 0 18px 50px rgba(20,16,40,.14); }
-    .edit-banner { position: absolute; left: 50%; top: 4px; transform: translateX(-50%); z-index: 5; display: none; align-items: center; gap: 10px; background: var(--ink); color: #fff; padding: 6px 8px 6px 14px; border-radius: 10px; font-weight: 600; font-size: 12.5px; box-shadow: var(--shadow); white-space: nowrap; }
-    .edit-banner.on { display: flex; }
-    .edit-banner small { color: #c9c5d8; font-weight: 500; }
-    .edit-banner button { border: 0; border-radius: 7px; padding: 5px 12px; font-weight: 700; }
-    .edit-banner .ok { background: #fff; color: var(--ink); }
-    .edit-banner .no { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.35); }
     .panel-head .add { border: 1px solid var(--line); background: var(--subtle); border-radius: 6px; padding: 2px 8px; font-size: 11.5px; font-weight: 700; color: var(--brand); }
     .panel-head .add:hover { background: var(--brand-soft); border-color: #d5c6f6; }
     .thumb-acts { position: absolute; top: 4px; right: 4px; display: flex; gap: 3px; opacity: 0; transition: opacity .15s; z-index: 2; }
@@ -294,11 +322,6 @@
     .mm-busy.on { display: flex; }
     .mm-busy .dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--brand); border-top-color: transparent; animation: spin .8s linear infinite; }
     .ai-img-prev { max-height: 300px; border-radius: 10px; align-self: flex-start; max-width: 100%; display: none; }
-    .obj-tools { display: none; align-items: center; gap: 6px; padding-left: 10px; margin-left: 2px; border-left: 1px solid rgba(255,255,255,.25); }
-    .obj-tools.on { display: flex; }
-    .obj-tools .sw { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,.7); padding: 0; cursor: pointer; }
-    .obj-tools button.t { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.35); border-radius: 7px; padding: 4px 9px; font-weight: 700; }
-    .obj-tools button.t:hover { background: rgba(255,255,255,.12); }
   </style>
 </head>
 <body>
@@ -349,15 +372,6 @@
     <!-- 가운데: 슬라이드 + 조작 + 노트 + AI 입력 -->
     <main class="center">
       <div class="stage-wrap">
-        <div class="edit-banner" id="edit-banner"><span id="edit-hint">✏️ 글자를 클릭해 고치고, 그림·도형은 끌어서 옮기세요</span> <small id="edit-sub">Enter 줄바꿈 · Esc 취소</small>
-          <span class="obj-tools" id="obj-tools">
-            <span id="obj-colors" style="display:inline-flex;gap:5px"></span>
-            <button class="t" data-o="front" title="앞으로 가져오기">앞으로</button>
-            <button class="t" data-o="back" title="글자 뒤로 보내기">뒤로</button>
-            <button class="t" data-o="swap" title="다른 사진으로 바꾸기">사진 바꾸기</button>
-            <button class="t" data-o="del" title="삭제 (Delete)">삭제</button>
-          </span>
-          <button class="ok" id="btn-edit-save">저장</button><button class="no" id="btn-edit-cancel">취소</button></div>
         <div class="slide-stage" id="slide-stage"><iframe id="preview-frame" src="/preview"></iframe></div>
       </div>
 
@@ -368,7 +382,6 @@
           <button id="btn-next" title="다음 슬라이드 (→)">▶</button>
         </div>
         <span class="tb-sep"></span>
-        <button class="btn" id="btn-edit" title="이 슬라이드의 글자를 직접 고치기 (E)">✏️ 편집</button>
         <button class="btn" id="btn-ai-slide" title="이 슬라이드만 AI로 고치거나 다시 만들기">✨ AI로 고치기</button>
         <button class="btn" id="btn-advise" title="이 슬라이드에 어울리는 도식·도형·꾸밈·스타일을 추천합니다">💡 장표 추천</button>
         <div class="adv-pop" id="adv-pop">
@@ -506,6 +519,12 @@
         </div>
       </div>
     </main>
+
+    <!-- 오른쪽: 속성 패널 -->
+    <aside class="insp off" id="insp">
+      <div class="insp-head"><b id="insp-title">속성</b><span class="insp-save" id="insp-save"></span></div>
+      <div class="insp-body" id="insp-body"></div>
+    </aside>
 
     <!-- 오른쪽: 테마 갤러리 -->
     <aside class="theme-panel" id="theme-panel">

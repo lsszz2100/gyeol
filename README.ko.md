@@ -7,7 +7,7 @@
 **한국어 발표 자료를 만드는 AI 프레젠테이션 프로그램**
 주제 한 줄이나 내 파일을 넣으면, 최신 자료를 조사해 디자인된 슬라이드와 발표 대본까지 만들어 줍니다.
 
-[![Version](https://img.shields.io/badge/version-1.4.2-6d4aff?style=flat-square)](https://github.com/lsszz2100/gyeol-releases/releases/latest)
+[![Version](https://img.shields.io/badge/version-1.4.3-6d4aff?style=flat-square)](https://github.com/lsszz2100/gyeol-releases/releases/latest)
 [![Platform](https://img.shields.io/badge/platform-Windows%2010%2F11-0078d4?style=flat-square)](#-시작하기)
 [![Python](https://img.shields.io/badge/python-3.12-3776ab?style=flat-square)](#소스로-실행)
 [![Themes](https://img.shields.io/badge/themes-216-ff5d8f?style=flat-square)](#-디자인)

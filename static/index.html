@@ -651,6 +651,13 @@
     <div class="modal">
       <div style="display:flex;justify-content:space-between;align-items:center"><h3>⚙️ AI 설정</h3><button class="icon-btn" id="btn-close-settings">✕</button></div>
       <div class="field">
+        <label>화면 언어 · Display language</label>
+        <select id="cfg-ui-lang" data-noi18n>
+          <option value="ko">한국어</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+      <div class="field">
         <label>AI 엔진</label>
         <select id="cfg-provider">
           <option value="gemini">Google Gemini (추천 · 최신 자료 검색 지원)</option>
@@ -771,6 +778,7 @@
   </div>
 
   <div class="toast" id="toast"></div>
+  <script src="/static/js/i18n.js"></script>
   <script src="/static/js/app.js"></script>
 </body>
 </html>

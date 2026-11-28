@@ -4,7 +4,7 @@
 
 # GYEOL 결
 
-**An AI presentation studio for Korean decks.**
+**An AI presentation studio for Korean and English decks.**
 Type a topic or drop in your files, and get a researched, designed deck with a speaker script.
 
 [![Version](https://img.shields.io/badge/version-1.4.3-6d4aff?style=flat-square)](https://github.com/lsszz2100/gyeol-releases/releases/latest)
@@ -30,6 +30,7 @@ Type a topic or drop in your files, and get a researched, designed deck with a s
 | 📋 **Guide-matched decks** | Paste an RFP or assignment brief. GYEOL extracts the required sections, keywords and phrases, writes to them, and shows a ✅/⚠️ checklist. |
 | ✍️ **Click to edit** | Every text and object is editable right away. A properties panel on the right gives fonts, size, color, alignment, position and opacity. Changes save automatically. |
 | 💡 **Slide advisor and AI review** | Suggests a better layout for the current slide, and checks the whole deck for overflow and overlap, then fixes it. |
+| 🌐 **Korean and English** | The whole app runs in Korean or English (Settings → Display language), and decks can be written in Korean, English, or Korean with English titles. |
 | 🎨 **216 themes in 22 styles** | Swiss grid, editorial serif, neo-brutalism, glass, blueprint, hanji and more. Each style has its own type, background and decoration. |
 | 🖼 **Images, icons and shapes** | Free stock photo search, AI images, 200+ icons with Korean search, shapes, or your own pictures. |
 | 📤 **Export anywhere** | Editable PowerPoint, pixel-perfect PowerPoint, PDF, single-file HTML, PNG set, 1080p MP4, and the script as .md or .txt. |

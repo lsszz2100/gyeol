@@ -955,6 +955,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const { config: c = {}, edition } = await api("/api/config");
     document.querySelectorAll("#cfg-provider option[data-cli]").forEach((o) => { o.hidden = o.disabled = edition === "retail"; });   // 판매판은 구독 로그인 숨김
     $("cfg-provider").value = c.provider || "gemini";
+    $("cfg-ui-lang").value = (window.GYEOL_I18N && GYEOL_I18N.lang) || "ko";
     refreshCli();
     { const gm = c.gemini_model || "";   // 2.5 등 예전 모델 저장값은 3.5로 보여 준다(무료 키는 3.5 이상만)
       const ok = [...$("cfg-gemini-model").options].some((o) => o.value === gm);
@@ -973,6 +974,13 @@ document.addEventListener("DOMContentLoaded", () => {
       openai_api_key: $("cfg-openai-key").value.trim(),
       pixabay_api_key: $("cfg-pixabay-key").value.trim(),
     });
+    const uiLang = $("cfg-ui-lang").value, langChanged = uiLang !== ((window.GYEOL_I18N && GYEOL_I18N.lang) || "ko");
+    if (langChanged) {   // 화면 언어를 바꾸면 만드는 슬라이드 언어도 같이 맞추고 화면을 다시 불러온다
+      await api("/api/config", { ui_lang: uiLang });
+      sessionStorage.setItem("gyeol_deck_lang", uiLang);
+      location.reload();
+      return;
+    }
     modal.classList.remove("open");
     clearInterval(cliTimer); cliTimer = null;
     toast("설정을 저장했습니다.");
@@ -1962,6 +1970,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const [th, fo, ac, cf] = await Promise.all([api("/api/themes"), api("/api/fonts"), api("/api/active_project"), api("/api/config")]);
       state.opts = Object.assign({ elements: "normal", photo_level: "normal", mood: "auto", field: "auto", infographic: "normal" }, cf.gen_opts || {});
       if (!state.opts.elements) state.opts.elements = state.opts.charts === false ? "minimal" : "normal";   // 예전 '차트 적극 활용' 설정을 이어받음
+      { // 화면 언어를 방금 바꿨거나, 영어 화면인데 슬라이드 언어를 정한 적이 없으면 슬라이드도 같은 언어로
+        const ui = (window.GYEOL_I18N && GYEOL_I18N.lang) || "ko", just = sessionStorage.getItem("gyeol_deck_lang");
+        sessionStorage.removeItem("gyeol_deck_lang");
+        if (just) state.opts.language = just;
+        else if (ui === "en" && !(cf.config && cf.config.gen_opts && cf.config.gen_opts.language)) state.opts.language = "en";
+      }
       bindOpts();
       state.themes = th.themes || [];
       state.moodStyles = th.mood_styles || {};

@@ -54,7 +54,7 @@ TOKEN_COOKIE = "gyeol_session"
 ALLOWED_HOSTS = set()
 FONT_IDS = {f["id"] for f in AVAILABLE_FONTS}
 # /api/config 로 화면이 저장할 수 있는 설정 항목
-CLIENT_CFG_KEYS = {"provider", "gemini_api_key", "gemini_model", "openai_api_key", "openai_model", "pixabay_api_key",
+CLIENT_CFG_KEYS = {"ui_lang", "provider", "gemini_api_key", "gemini_model", "openai_api_key", "openai_model", "pixabay_api_key",
                    "default_theme", "default_font", "welcome_done"}
 # 첨부 자료 파일 1개 20MB (base64) + 여유
 MAX_BODY = 32 * 1024 * 1024
@@ -621,8 +621,17 @@ class KDesignHandler(BaseHTTPRequestHandler):
 
         # 1. 메인 웹 대시보드
         if path == "/" or path == "/index.html":
-            index_path = os.path.join(STATIC_DIR, "index.html")
-            self._send_file(index_path)
+            # 화면 언어 설정(ko/en, 비면 PC 언어)을 넣어 보낸다 → static/js/i18n.js 가 읽음
+            try:
+                with open(os.path.join(STATIC_DIR, "index.html"), encoding="utf-8") as f:
+                    page = f.read()
+            except OSError:
+                self.send_error(404, "File Not Found")
+                return
+            lang = load_config().get("ui_lang", "")
+            lang = lang if lang in ("ko", "en") else ""
+            page = page.replace('<html lang="ko">', f'<html lang="ko" data-ui-lang="{lang}">', 1)
+            self._send_html(200, page)
             return
 
         # 2. 정적 파일 호스팅 (/static/...)

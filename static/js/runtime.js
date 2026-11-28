@@ -494,6 +494,19 @@
      * Two windows sync via BroadcastChannel.
      */
     let presenterWin = null;
+    /* 발표자 창 문구: 결 화면이 영어이거나(앱 안), 내보낸 슬라이드에 한글이 없으면 영어로 */
+    const PRESENTER_EN = [
+      ['현재 슬라이드', 'Current slide'], ['다음 슬라이드', 'Next slide'], ['발표 대본 (Speaker Notes)', 'Speaker notes'], ['발표 타이머', 'Timer'],
+      ['<span class="label">슬라이드</span>', '<span class="label">Slide</span>'], ['← 이전', '← Prev'], ['다음 →', 'Next →'], ['⏱ 초기화', '⏱ Reset'],
+      ['슬라이드 이동', 'Move slides'], ['타이머 초기화', 'Reset timer'], ['<kbd>Esc</kbd> 닫기', '<kbd>Esc</kbd> Close'],
+      ['카드 상단 드래그로 이동 · 우측 하단 핸들로 크기 조절', 'Drag a card header to move · drag the corner to resize'], ['레이아웃 초기화', 'Reset layout'],
+      ['(이 슬라이드에는 작성된 발표 대본이 없습니다)', '(No speaker notes for this slide)'], ['기본 카드 레이아웃으로 초기화하시겠습니까?', 'Reset to the default card layout?']
+    ];
+    function presenterEnglish() {
+      try { const v = window.top.document.documentElement.getAttribute('data-ui-lang-resolved'); if (v) return v === 'en'; } catch (e) {}
+      const d = document.querySelector('.deck');
+      return !!d && !/[가-힣]/.test(d.textContent || '');
+    }
 
     function openPresenterWindow(preopened) {
       if (preopened && presenterWin && !presenterWin.closed && preopened !== presenterWin) { try { preopened.close(); } catch(e) {} }
@@ -514,11 +527,12 @@
       });
 
       const currentTheme = root.getAttribute('data-theme') || (themes[themeIdx] || '');
-      const presenterHTML = buildPresenterHTML(deckUrl, slideMeta, total, idx, CHANNEL_NAME, currentTheme);
+      let presenterHTML = buildPresenterHTML(deckUrl, slideMeta, total, idx, CHANNEL_NAME, currentTheme);
+      if (presenterEnglish()) for (const [ko, en] of PRESENTER_EN) presenterHTML = presenterHTML.split(ko).join(en);
 
       presenterWin = preopened || window.open('', 'gyeol-presenter', 'width=1280,height=820,menubar=no,toolbar=no');
       if (!presenterWin) {
-        alert('발표자 모드를 사용하려면 브라우저의 팝업 창을 허용해 주세요.');
+        alert(presenterEnglish() ? 'Allow pop-up windows in your browser to use presenter mode.' : '발표자 모드를 사용하려면 브라우저의 팝업 창을 허용해 주세요.');
         return;
       }
       presenterWin.document.open();

@@ -15,7 +15,7 @@ Type a topic or drop in your files, and get a researched, designed deck with a s
 
 **English** · [한국어](README.ko.md)
 
-<img src="docs/images/01_edit_text.png" width="900" alt="GYEOL editor: slide list, live slide, properties panel">
+<img src="docs/images/00_hero.png" width="900" alt="GYEOL editor: slide list, live slide, properties panel">
 
 </div>
 
@@ -34,18 +34,67 @@ Type a topic or drop in your files, and get a researched, designed deck with a s
 | 🖼 **Images, icons and shapes** | Free stock photo search, AI images, 200+ icons with Korean search, shapes, or your own pictures. |
 | 📤 **Export anywhere** | Editable PowerPoint, pixel-perfect PowerPoint, PDF, single-file HTML, PNG set, 1080p MP4, and the script as .md or .txt. |
 
-## 📸 Screenshots
+## 📸 A tour of the editor
 
-<table>
-<tr>
-<td width="50%"><img src="docs/images/02_edit_photo.png" alt="Click a picture to replace or remove it"><br><sub>Click a picture to replace or remove it</sub></td>
-<td width="50%"><img src="docs/images/03_themes.png" alt="216 themes, switched instantly"><br><sub>216 themes, switched instantly</sub></td>
-</tr>
-<tr>
-<td width="50%"><img src="docs/images/04_overview.png" alt="Overview of every slide (O)"><br><sub>Overview of every slide (O)</sub></td>
-<td width="50%"><img src="docs/images/05_export.png" alt="Export to PowerPoint, PDF, HTML, PNG, MP4 or script"><br><sub>Export to PowerPoint, PDF, HTML, PNG, MP4 or script</sub></td>
-</tr>
-</table>
+> The sample deck below uses **Gmarket Sans** (titles) and **Pretendard** (body), both free for commercial use. Numbers in each picture match the notes under it.
+
+### 1 · Click any text to edit it
+
+<img src="docs/images/01_edit_text.png" alt="Editing text with the properties panel">
+
+1. **Edit in place.** Click any text on the slide and start typing. No edit button or edit mode. The selected block gets a purple frame.
+2. **Font.** Keep the theme's font, or pick one of six free-for-commercial-use Korean fonts: Pretendard, Gmarket Sans, Spoqa Han Sans, Chosunilbo Myungjo, NanumSquare Neo and BM Jua.
+3. **Size.** Type a pixel size or step it with − / +.
+4. **Color.** Theme colors in one click, or any color with the picker. Drag across part of the text first and the change applies only to that part. Bold, italic, underline, alignment and line spacing work the same way.
+5. **Slide list.** Drag to reorder. Each thumbnail has move up, move down, duplicate and delete buttons.
+6. **Slide toolbar.** Previous/next, ✨ AI fix, 💡 slide advisor, 🔍 AI review, 🖼 insert, undo, speaker script, overview, presenter mode and fullscreen. It stays on one row and drops labels on narrow windows.
+7. **Speaker script.** Every slide comes with a script. Click to edit it.
+8. **Make a deck.** Type a topic, attach 📎 your files or a 📋 guide, pick a preset, set ⚙ options (slide count, text density, charts, photos, closing slide) and press ✨.
+
+Changes save automatically about a second after you stop. `Ctrl` + `Z` undoes them.
+
+### 2 · Pictures
+
+<img src="docs/images/02_edit_photo.png" alt="Selecting a photo on a slide">
+
+1. **Photo panel.** Click a picture to select it. Generated decks fill these from free stock photos, AI images or the photos in your own files.
+2. **Replace or remove** the picture. `Delete` removes it and `Esc` deselects.
+3. **🖼 Insert** free stock photos, AI images, 200+ icons with Korean search, shapes or your own pictures. Inserted objects can be dragged, resized, layered and faded.
+4. **✨ AI fix** rewrites only this slide from a one-line request, or adds a new slide after it.
+5. **💡 Slide advisor** suggests layouts, diagrams and decorations that fit this slide's content.
+
+### 3 · Themes
+
+<img src="docs/images/03_themes.png" alt="Theme panel with 216 themes">
+
+1. **Search** themes by name or style.
+2. **Deck font.** Change the font for the whole deck at once.
+3. **Filter** by 22 styles (Swiss type, startup gradient, corporate report, editorial serif, neo-brutalism, terminal, hanji and more) and by light or dark.
+4. **Click a card** to restyle the deck instantly. Text, photos and edits are kept.
+
+### 4 · Overview and presenting
+
+<img src="docs/images/04_overview.png" alt="Overview grid of all slides">
+
+1. **Overview** shows every slide with its title. Click one to jump to it.
+2. Toggle the overview here or press `O`.
+3. **Presenter mode** (`S`) opens a separate window with the script, a timer and the next slide.
+4. **▶ Present** starts fullscreen with animations and transitions.
+
+### 5 · Export
+
+<img src="docs/images/05_export.png" alt="Export menu">
+
+1. **PowerPoint, editable.** Real text boxes you can edit, with the script in the speaker notes.
+2. **PowerPoint, exact.** Each slide as a picture, so the design looks 100% the same.
+3. **PDF** for printing and sharing, one slide per page.
+4. **HTML**, a single file that keeps animations and presenter mode.
+5. **PNG set**, one image per slide in a zip.
+6. **MP4 video** in 1080p, with animations and transitions.
+7. **Script and outline (.md)**: a summary of each slide plus the script.
+8. **Full script (.txt)** for rehearsal or a teleprompter.
+
+Fonts are embedded on export, so files look the same on other PCs.
 
 ## 🚀 Getting started
 

@@ -602,12 +602,12 @@ document.addEventListener("DOMContentLoaded", () => {
   function setStep(id, cls) { const el = $(id); el.classList.remove("run", "done"); if (cls) el.classList.add(cls); }
 
   // ───────────────── 내 자료로 만들기 ─────────────────
-  let sourceFiles = [];   // [{name, text, chars, truncated}] 글자만 보관, 파일은 저장하지 않음
+  let sourceFiles = [];   // [{name, text, chars, truncated, images:[{url, desc, where, w, h}]}] 파일 자체는 저장하지 않음
   let sourceResearch = false;
   function renderSources() {
     const box = $("src-list");
     box.style.display = sourceFiles.length ? "flex" : "none";
-    box.innerHTML = sourceFiles.map((f, i) => `<span class="chip" style="cursor:default">📄 ${esc(f.name)} · ${f.chars.toLocaleString()}자${f.truncated ? " (앞부분만 사용)" : f.long ? " (길어서 핵심만 요약해 사용)" : ""}${f.ocr ? " · 스캔 글자 읽음" : ""}
+    box.innerHTML = sourceFiles.map((f, i) => `<span class="chip" style="cursor:default">${f.photo_only ? "🖼" : "📄"} ${esc(f.name)}${f.chars ? ` · ${f.chars.toLocaleString()}자` : ""}${f.truncated ? " (앞부분만 사용)" : f.long ? " (길어서 핵심만 요약해 사용)" : ""}${f.ocr ? " · 스캔 글자 읽음" : ""}${(f.images || []).length ? ` · 사진 ${f.images.length}장` : ""}
       <a href="#" data-src-del="${i}" title="빼기" style="margin-left:4px;text-decoration:none">✕</a></span>`).join("") +
       (sourceFiles.length ? `<label style="display:inline-flex;gap:4px;align-items:center;margin-left:4px"><input type="checkbox" id="src-research"${sourceResearch ? " checked" : ""}> 최신 인터넷 조사도 함께 반영</label>` : "");
     box.querySelectorAll("[data-src-del]").forEach((a) => a.onclick = (e) => { e.preventDefault(); sourceFiles.splice(+a.dataset.srcDel, 1); renderSources(); });
@@ -618,7 +618,10 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   async function addSources(files) {
     for (const f of files) {
-      if (sourceFiles.length >= 5) { toast("자료는 5개까지 넣을 수 있습니다.", true); break; }
+      const isPic = /\.(png|jpe?g|webp)$/i.test(f.name);
+      const nDocs = sourceFiles.filter((x) => !x.photo_only).length, nPics = sourceFiles.filter((x) => x.photo_only).length;
+      if (!isPic && nDocs >= 5) { toast("문서는 5개까지 넣을 수 있습니다.", true); continue; }
+      if (isPic && nPics >= 16) { toast("사진 파일은 16장까지 넣을 수 있습니다.", true); continue; }
       if (f.size > 20 * 1024 * 1024) { toast(`${f.name}: 20MB 이하 파일만 넣을 수 있습니다.`, true); continue; }
       const data = await new Promise((ok, no) => {
         const r = new FileReader();
@@ -627,7 +630,7 @@ document.addEventListener("DOMContentLoaded", () => {
         r.readAsDataURL(f);
       });
       $("btn-src").disabled = true;
-      if (/\.(pdf|png|jpe?g|webp)$/i.test(f.name)) toast(`${f.name}: 글자가 없는 스캔 문서면 AI가 읽느라 최대 1분 걸립니다.`, false);
+      if (/\.(pdf|png|jpe?g|webp|pptx|docx|hwpx)$/i.test(f.name)) toast(`${f.name}: 글자와 사진을 읽는 중입니다. 스캔 문서나 사진이 많으면 최대 1분 걸립니다.`, false);
       try {
         const res = await api("/api/read_source", { name: f.name, data });
         if (!res.ok) toast(`${f.name}: ${res.message}`, true);
@@ -727,6 +730,7 @@ document.addEventListener("DOMContentLoaded", () => {
         font: $("font-select").value || "theme",
         opts: { ...state.opts, research },
         material: sourceFiles.map((f) => ({ name: f.name, text: f.text })),
+        images: sourceFiles.flatMap((f) => f.images || []),
         guide,
       });
       if (!res.ok) { toast(res.message || "생성에 실패했습니다.", true); return; }
@@ -735,7 +739,8 @@ document.addEventListener("DOMContentLoaded", () => {
       applyProject(res.project, false);
       const extra = res.research_used ? ` · 최신 자료 ${res.source_count}건 반영${res.research_how === "web" ? " (인터넷 조사)" : ""}` : "";
       const ph = res.photos_pending ? ` · 사진 ${res.photos_pending}장은 찾는 대로 넣습니다` : "";
-      toast(`${res.message}${extra}${ph}`);
+      const mine = res.my_photos ? ` · 내 사진 ${res.my_photos_used}/${res.my_photos}장 배치` : "";
+      toast(`${res.message}${extra}${mine}${ph}`);
       if (res.research_failed) setTimeout(() => toast(res.research_note || "최신 자료 검색을 쓸 수 없어(네트워크 확인) AI가 알고 있는 내용으로 만들었습니다. 수치는 직접 확인해 주세요.", true), 1800);
       if (res.photos_pending) watchPhotos(res.project.id);
       if (guide) showGuideResult(res);

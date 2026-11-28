@@ -31,7 +31,7 @@ from core.template_compiler import (
     compile_slide_deck,
 )
 from core.korean_presets import get_all_presets, get_preset_by_id
-from ai_engine import resolve_opts, mood_styles, generate_presentation_slides, rewrite_slide, to_english, AIGenerationError, DEFAULT_OPTS, ocr_images, summarize_chunk, _call_llm
+from ai_engine import resolve_opts, mood_styles, generate_presentation_slides, rewrite_slide, to_english, AIGenerationError, DEFAULT_OPTS, ocr_images, describe_images, summarize_chunk, _call_llm
 from core import guide as guide_mod
 import desktop
 import config as config_mod
@@ -801,9 +801,11 @@ class KDesignHandler(BaseHTTPRequestHandler):
             cfg_, provider_, key_, model_ = _ai_cfg()
             gkey = cfg_.get("gemini_api_key", "")   # 스캔 문서·사진은 Gemini 비전으로 읽는다
             ocr = (lambda imgs: ocr_images(imgs, gkey, cfg_.get("gemini_model", ""))) if gkey else None
+            describe = (lambda imgs: describe_images(imgs, gkey, cfg_.get("gemini_model", ""))) if gkey else None
             try:
                 with BUSY:
-                    res = sources.read_file(req_data.get("name"), req_data.get("data"), ocr=ocr)
+                    res = sources.read_file(req_data.get("name"), req_data.get("data"), ocr=ocr,
+                                            save_image=media.save_bytes, describe=describe)
                 self._send_json(200, {"ok": True, **res})
             except sources.SourceError as e:
                 self._send_json(200, {"ok": False, "message": str(e)})
@@ -841,6 +843,13 @@ class KDesignHandler(BaseHTTPRequestHandler):
             summ = (lambda c, t, n, i, tot: summarize_chunk(c, t, n, i, tot, cfg.get("gemini_api_key", ""), gm)) if cfg.get("gemini_api_key") else None
             with BUSY:   # 긴 문서는 여기서 조각별로 요약하느라 시간이 걸린다
                 material, material_names = sources.build_material(req_data.get("material") or [], summarize=summ)
+            user_images = sources.clean_images(req_data.get("images") or [],
+                                               lambda u: bool(media.media_path(u[len("/media/"):])))
+            if user_images and not material_names and not prompt:   # 사진만 넣은 경우
+                prompt = "첨부한 사진들을 소개하는 발표 자료 (사진 설명을 바탕으로 구성)"
+                first = next((str(m.get("name") or "") for m in (req_data.get("material") or []) if isinstance(m, dict)), "")
+                if title == "새 프레젠테이션":
+                    title = os.path.splitext(first)[0][:40] or "사진으로 만든 발표"
             if material_names and not req_data.get("prompt", "").strip():
                 title = os.path.splitext(material_names[0])[0][:40]
             if not material_names:   # 자료 첨부 때의 조사 끔은 이번 생성에만 적용
@@ -884,7 +893,7 @@ class KDesignHandler(BaseHTTPRequestHandler):
                             slide_count=int(opts.get("slide_count") or 10),
                             use_research=bool(opts.get("research", True)),
                             opts=resolve_opts(opts, theme), defer_photos=True, material=material, material_names=material_names,
-                            guide=gb,
+                            guide=gb, user_images=user_images,
                         )
                     result = _gen(gblock)
                     if gblock:
@@ -942,6 +951,7 @@ class KDesignHandler(BaseHTTPRequestHandler):
                 "research_how": result.get("research_how", ""),
                 "research_note": "인터넷 조사 결과를 가져오지 못해 AI가 알고 있는 내용으로 만들었습니다. 수치는 직접 확인해 주세요.",
                 "photos_pending": len(jobs), "project": ACTIVE_PROJECT,
+                "my_photos": len(user_images), "my_photos_used": result.get("my_photos_used", 0),
                 "guide_found": bool(guide_req and guide_req.get("found")), "guide_checks": guide_checks,
                 "guide": guide_req if guide_req and guide_req.get("found") else None,
             })

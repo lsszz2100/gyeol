@@ -62,7 +62,12 @@
     .slide-stage { width: min(100cqw, 100cqh * 16 / 9); aspect-ratio: 16/9; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(20,16,40,.08), 0 18px 50px rgba(20,16,40,.14); position: relative; }
     .slide-stage iframe { width: 100%; height: 100%; border: 0; display: block; }
 
-    .stage-toolbar { flex: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 28px 10px; flex-wrap: wrap; }
+    .stage-toolbar { flex: none; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 4px 16px 10px; flex-wrap: nowrap; min-width: 0; }
+    .stage-toolbar > .btn, .stage-toolbar .menu-wrap > .btn { flex: none; }
+    .center { container-type: inline-size; }
+    @container (max-width: 1080px) { .stage-toolbar { gap: 4px; } .stage-toolbar .btn { padding: 6px 9px; font-size: 12.5px; gap: 4px; } .stage-toolbar .tb-sep { margin: 0 2px; } }
+    @container (max-width: 900px) { .stage-toolbar #btn-notes .lb, .stage-toolbar #btn-overview .lb, .stage-toolbar #btn-presenter .lb, .stage-toolbar #btn-fullscreen .lb, .stage-toolbar #btn-undo .lb { display: none; } }
+    @container (max-width: 680px) { .stage-toolbar .btn .lb { display: none; } .stage-toolbar .nav-group .count { min-width: 48px; padding: 0 6px; } }
     .nav-group { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); overflow: hidden; }
     .nav-group button { border: 0; background: transparent; padding: 7px 11px; font-weight: 700; }
     .nav-group button:hover { background: var(--subtle); }
@@ -382,17 +387,17 @@
           <button id="btn-next" title="다음 슬라이드 (→)">▶</button>
         </div>
         <span class="tb-sep"></span>
-        <button class="btn" id="btn-ai-slide" title="이 슬라이드만 AI로 고치거나 다시 만들기">✨ AI로 고치기</button>
-        <button class="btn" id="btn-advise" title="이 슬라이드에 어울리는 도식·도형·꾸밈·스타일을 추천합니다">💡 장표 추천</button>
+        <button class="btn" id="btn-ai-slide" title="이 슬라이드만 AI로 고치거나 다시 만들기">✨<span class="lb">AI로 고치기</span></button>
+        <button class="btn" id="btn-advise" title="이 슬라이드에 어울리는 도식·도형·꾸밈·스타일을 추천합니다">💡<span class="lb">장표 추천</span></button>
         <div class="adv-pop" id="adv-pop">
           <div class="adv-head"><b id="adv-title">장표 추천</b><span class="spacer"></span>
             <button class="btn" id="btn-adv-all" style="padding:4px 10px;font-size:12px">전체 장표 점검</button>
             <button class="icon-btn" id="btn-adv-close">✕</button></div>
           <div id="adv-body"></div>
         </div>
-        <button class="btn" id="btn-review" title="모든 슬라이드를 화면으로 확인해 글자 넘침·겹침을 AI가 찾아서 고쳐 줍니다">🔍 AI 검수</button>
+        <button class="btn" id="btn-review" title="모든 슬라이드를 화면으로 확인해 글자 넘침·겹침을 AI가 찾아서 고쳐 줍니다">🔍<span class="lb">AI 검수</span></button>
         <div class="menu-wrap">
-          <button class="btn" id="btn-insert" title="사진·그림·아이콘·도형 넣기">🖼 넣기 ▾</button>
+          <button class="btn" id="btn-insert" title="사진·그림·아이콘·도형 넣기">🖼<span class="lb">넣기 ▾</span></button>
           <div class="menu up" id="insert-menu">
             <button data-t="search"><span class="ic">🔍</span><span><b>무료 사진 검색</b><small>저작권 걱정 없는 사진</small></span></button>
             <button data-t="ai"><span class="ic">🎨</span><span><b>AI 그림 만들기</b><small>원하는 장면을 글로 설명</small></span></button>
@@ -401,7 +406,7 @@
             <button data-t="file"><span class="ic">📁</span><span><b>내 사진·그림 올리기</b><small>PC에 있는 파일</small></span></button>
           </div>
         </div>
-        <button class="btn" id="btn-undo" title="되돌리기 (Ctrl+Z)" disabled>↶ 되돌리기</button>
+        <button class="btn" id="btn-undo" title="되돌리기 (Ctrl+Z)" disabled>↶<span class="lb">되돌리기</span></button>
         <span class="tb-sep"></span>
         <div class="ai-pop" id="ai-pop">
           <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
@@ -418,10 +423,10 @@
             <button class="gen-btn" id="btn-ai-run">✨ 고치기</button>
           </div>
         </div>
-        <button class="btn on" id="btn-notes" title="이 슬라이드의 발표 대본 보기">🗒 발표자 대본</button>
-        <button class="btn" id="btn-overview" title="모든 슬라이드를 한눈에 (O)">▦ 전체 개요</button>
-        <button class="btn" id="btn-presenter" title="대본·타이머·다음 슬라이드가 있는 발표자 창 (S)">🎤 발표자 모드</button>
-        <button class="btn" id="btn-fullscreen" title="전체화면 (F)">⛶ 전체화면</button>
+        <button class="btn on" id="btn-notes" title="이 슬라이드의 발표 대본 보기">🗒<span class="lb">발표자 대본</span></button>
+        <button class="btn" id="btn-overview" title="모든 슬라이드를 한눈에 (O)">▦<span class="lb">전체 개요</span></button>
+        <button class="btn" id="btn-presenter" title="대본·타이머·다음 슬라이드가 있는 발표자 창 (S)">🎤<span class="lb">발표자 모드</span></button>
+        <button class="btn" id="btn-fullscreen" title="전체화면 (F)">⛶<span class="lb">전체화면</span></button>
       </div>
 
       <div class="notes-pane open" id="notes-pane">
@@ -433,7 +438,7 @@
         <div id="src-list" style="display:none;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:8px;font-size:12.5px"></div>
         <div class="dock-row">
           <input type="file" id="src-file" multiple hidden accept=".pdf,.docx,.pptx,.hwpx,.xlsx,.txt,.md,.csv,.tsv,.hwp,.doc,.ppt,.xls,.png,.jpg,.jpeg,.webp">
-          <button class="btn" id="btn-src" title="가지고 있는 문서로 발표 자료 만들기 (PDF, Word, 파워포인트, 한글, 엑셀, 텍스트, 스캔·사진)">📎 내 자료</button>
+          <button class="btn" id="btn-src" title="가지고 있는 문서·사진으로 발표 자료 만들기 (PDF, Word, 파워포인트, 한글, 엑셀, 텍스트, 사진). 파일 안의 사진도 꺼내서 어울리는 장에 넣습니다">📎 내 자료</button>
           <button class="btn" id="btn-guide" title="제안요청서·과제 안내·발표 지침 같은 가이드를 넣으면 요구 사항을 분석해 그대로 맞춘 PPT를 만듭니다">📋 가이드</button>
           <textarea id="prompt-input" class="prompt" rows="1" placeholder="어떤 발표 자료를 만들까요? 예) 2026년 대한민국 고용 동향 보고서"></textarea>
           <button class="gen-btn" id="btn-generate">✨ 슬라이드 만들기</button>

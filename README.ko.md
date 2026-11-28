@@ -14,7 +14,7 @@
 
 [English](README.md) · **한국어**
 
-<img src="docs/images/editor.png" width="900" alt="결 편집 화면: 슬라이드 목록, 슬라이드, 오른쪽 속성 패널">
+<img src="docs/images/01_edit_text.png" width="900" alt="결 편집 화면: 슬라이드 목록, 슬라이드, 오른쪽 속성 패널">
 
 </div>
 
@@ -32,6 +32,19 @@
 | 🎨 **테마 216종 · 스타일 22종** | 스위스 타이포·에디토리얼 명조·네오 브루탈·글래스·블루프린트·한지 전통 등. 스타일마다 서체·배경·장식이 다릅니다. |
 | 🖼 **사진 · 아이콘 · 도형** | 무료 사진 검색, AI 그림, 한글로 찾는 아이콘 200여 개, 도형, 내 사진을 넣을 수 있습니다. |
 | 📤 **다양한 내보내기** | 편집 가능한 파워포인트, 원본 그대로 파워포인트, PDF, HTML 한 파일, PNG 묶음, 1080p MP4 동영상, 대본(.md/.txt). |
+
+## 📸 스크린샷
+
+<table>
+<tr>
+<td width="50%"><img src="docs/images/02_edit_photo.png" alt="사진을 누르면 바로 바꾸거나 뺄 수 있음"><br><sub>사진을 누르면 바로 바꾸거나 뺄 수 있음</sub></td>
+<td width="50%"><img src="docs/images/03_themes.png" alt="테마 216종, 누르면 바로 바뀜"><br><sub>테마 216종, 누르면 바로 바뀜</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/images/04_overview.png" alt="모든 슬라이드를 한눈에 (O)"><br><sub>모든 슬라이드를 한눈에 (O)</sub></td>
+<td width="50%"><img src="docs/images/05_export.png" alt="파워포인트·PDF·HTML·PNG·MP4·대본으로 내보내기"><br><sub>파워포인트·PDF·HTML·PNG·MP4·대본으로 내보내기</sub></td>
+</tr>
+</table>
 
 ## 🚀 시작하기
 

@@ -14,7 +14,7 @@ Type a topic or drop in your files, and get a researched, designed deck with a s
 
 **English** · [한국어](README.ko.md)
 
-<img src="docs/images/editor.png" width="900" alt="GYEOL editor: slide list, live slide, properties panel">
+<img src="docs/images/01_edit_text.png" width="900" alt="GYEOL editor: slide list, live slide, properties panel">
 
 </div>
 
@@ -32,6 +32,19 @@ Type a topic or drop in your files, and get a researched, designed deck with a s
 | 🎨 **216 themes in 22 styles** | Swiss grid, editorial serif, neo-brutalism, glass, blueprint, hanji and more. Each style has its own type, background and decoration. |
 | 🖼 **Images, icons and shapes** | Free stock photo search, AI images, 200+ icons with Korean search, shapes, or your own pictures. |
 | 📤 **Export anywhere** | Editable PowerPoint, pixel-perfect PowerPoint, PDF, single-file HTML, PNG set, 1080p MP4, and the script as .md or .txt. |
+
+## 📸 Screenshots
+
+<table>
+<tr>
+<td width="50%"><img src="docs/images/02_edit_photo.png" alt="Click a picture to replace or remove it"><br><sub>Click a picture to replace or remove it</sub></td>
+<td width="50%"><img src="docs/images/03_themes.png" alt="216 themes, switched instantly"><br><sub>216 themes, switched instantly</sub></td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/images/04_overview.png" alt="Overview of every slide (O)"><br><sub>Overview of every slide (O)</sub></td>
+<td width="50%"><img src="docs/images/05_export.png" alt="Export to PowerPoint, PDF, HTML, PNG, MP4 or script"><br><sub>Export to PowerPoint, PDF, HTML, PNG, MP4 or script</sub></td>
+</tr>
+</table>
 
 ## 🚀 Getting started
 
